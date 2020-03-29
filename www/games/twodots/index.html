@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>WOOHO | Two Dots</title>
+    <!-- jquery ui, bootstrap, font-awesome -->
+    <link href="public/lib/jquery/jquery-ui.structure.min.css"></link>
+    <link href="public/lib/jquery/jquery-ui.theme.min.css"></link>
+    <link href="public/lib/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link href="public/lib/bootstrap/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="public/lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- custom -->
+    <link href="public/stylesheets/custom.css" rel="stylesheet">
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-4C17T6BLHF"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'G-4C17T6BLHF');
+	</script>
+  </head>
+  <body role="document">
+    <div class="container theme-showcase" role="main">
+      <div class="jumbotron">
+        <div class="row">
+          <div class="col-xs-2 col-sm-2 col-md-2"><div class="color-score blue-score">0</div></div>
+          <div class="col-xs-2 col-sm-2 col-md-2"><div class="color-score green-score">0</div></div>
+          <div class="col-xs-2 col-sm-2 col-md-2"><div class="color-score purple-score">0</div></div>
+          <div class="col-xs-2 col-sm-2 col-md-2"><div class="color-score red-score">0</div></div>
+          <div class="col-xs-2 col-sm-2 col-md-2"><div class="color-score yellow-score">0</div></div>
+          <div class="col-xs-2 col-sm-2 col-md-2">
+            <div class="row">
+            <div class="col-md-3">
+              <div class="color-score total-score" id="score">0</div>
+            </div>
+            <div class="col-md-3" id="total-label">Total</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3 noselect" id="board">
+          <i class="fa fa-cog fa-spin fa-5x"></i>
+          <p>Generating...</p>
+        </div>
+      </div>
+    </div>
+	<div id="sound">
+		<audio class="sound_explode" src="res/explode.wav" type="audio/wav"></audio>
+		<audio class="sound_square" src="res/square.ogg" type="audio/ogg"></audio>
+	</div>
+  </body>
+  <!-- jquery, jquery-ui, bootstrap -->
+  <script src="public/lib/jquery/jquery.min.js"></script>
+  <script src="public/lib/jquery/jquery-ui.min.js"></script>
+  <script src="public/lib/bootstrap/bootstrap.min.js"></script>
+  <!-- custom -->
+  <script src="public/javascripts/01-helper-functions.js"></script>
+  <script src="public/javascripts/02-dot.js"></script>
+  <script src="public/javascripts/03-board.js"></script>
+  <script src="public/javascripts/04-builder.js"></script>
+</html>

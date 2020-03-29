@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="./css/main.css">
+  <title>WOOHO | Tetris</title>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4C17T6BLHF"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'G-4C17T6BLHF');
+	</script>
+</head>
+<body>
+	<script src="./js/jquery.min.js"></script>
+  <script src="./js/sound-manager.js"></script>
+  <script src="./js/constants.js"></script>
+  <script src="./js/shaker.js"></script>
+  <script src="./js/pieces.js"></script>
+  <script src="./js/piece-factory.js"></script>
+  <script src="./js/board.js"></script>
+  <script src="./js/game.js"></script>
+  <script src="./js/painter.js"></script>
+  <script src="./js/index.js"></script>
+	<script>
+		$(document).ready(function() { 
+			document.addEventListener('touchstart',function(event){
+				startx = event.touches[0].pageX;
+				starty = event.touches[0].pageY;
+			});
+
+			document.addEventListener('touchmove',function(event){
+				event.preventDefault();
+			});
+
+			document.addEventListener('touchend',function(event){
+				documentWidth = window.screen.width;
+				endx = event.changedTouches[0].pageX;
+				endy = event.changedTouches[0].pageY;
+				
+				var deltax = endx - startx;
+				var deltay = endy - starty;
+				
+				if(Math.abs(deltax) <0.2*documentWidth&& Math.abs(deltay)<0.2*documentWidth){
+					if((startx > 37 && startx < 129) && (starty > 141 && starty < 295)){
+						var e = 16;
+				
+						Podium = {};
+						var n = document.createEvent("KeyboardEvent");
+						Object.defineProperty(n, "keyCode", {
+							get: function() {
+								return this.keyCodeVal
+							}
+						}), n.initKeyboardEvent ? n.initKeyboardEvent("keydown", !0, !0, document.defaultView, e, e, "", "", !1, "") : n.initKeyEvent("keydown", !0, !0, document.defaultView, !1, !1, !1, !1, e, 0), n.keyCodeVal = e, document.body.dispatchEvent(n)
+					
+						evt.preventDefault();
+					}else{
+						var e = 38;
+				
+						Podium = {};
+						var n = document.createEvent("KeyboardEvent");
+						Object.defineProperty(n, "keyCode", {
+							get: function() {
+								return this.keyCodeVal
+							}
+						}), n.initKeyboardEvent ? n.initKeyboardEvent("keydown", !0, !0, document.defaultView, e, e, "", "", !1, "") : n.initKeyEvent("keydown", !0, !0, document.defaultView, !1, !1, !1, !1, e, 0), n.keyCodeVal = e, document.body.dispatchEvent(n)
+					
+						evt.preventDefault();
+					}
+					
+					return;
+				}
+				
+				if(Math.abs(deltax) >= Math.abs(deltay)){
+					if(deltax > 0){
+						var e = 39;
+			
+						Podium = {};
+						var n = document.createEvent("KeyboardEvent");
+						Object.defineProperty(n, "keyCode", {
+							get: function() {
+								return this.keyCodeVal
+							}
+						}), n.initKeyboardEvent ? n.initKeyboardEvent("keydown", !0, !0, document.defaultView, e, e, "", "", !1, "") : n.initKeyEvent("keydown", !0, !0, document.defaultView, !1, !1, !1, !1, e, 0), n.keyCodeVal = e, document.body.dispatchEvent(n)
+					
+						evt.preventDefault();
+					}else{
+						var e = 37;
+			
+						Podium = {};
+						var n = document.createEvent("KeyboardEvent");
+						Object.defineProperty(n, "keyCode", {
+							get: function() {
+								return this.keyCodeVal
+							}
+						}), n.initKeyboardEvent ? n.initKeyboardEvent("keydown", !0, !0, document.defaultView, e, e, "", "", !1, "") : n.initKeyEvent("keydown", !0, !0, document.defaultView, !1, !1, !1, !1, e, 0), n.keyCodeVal = e, document.body.dispatchEvent(n)
+					
+						evt.preventDefault();
+					}
+				}else{
+					if(deltay > 0){
+						var e = 32;
+			
+						Podium = {};
+						var n = document.createEvent("KeyboardEvent");
+						Object.defineProperty(n, "keyCode", {
+							get: function() {
+								return this.keyCodeVal
+							}
+						}), n.initKeyboardEvent ? n.initKeyboardEvent("keydown", !0, !0, document.defaultView, e, e, "", "", !1, "") : n.initKeyEvent("keydown", !0, !0, document.defaultView, !1, !1, !1, !1, e, 0), n.keyCodeVal = e, document.body.dispatchEvent(n)
+					
+						evt.preventDefault();
+					}
+				}
+			});
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- config.xml reference: https://build.phonegap.com/docs/config-xml -->
+<widget xmlns     = "http://www.w3.org/ns/widgets"
+        xmlns:gap = "http://phonegap.com/ns/1.0"
+        id        = "com.wkv.game"
+        version   = "1.0.1">
+
+    <name>WKV</name>
+
+    <description>
+        WKV Application serves as a platform for of WKV’s member to obtain basic information and calculation method can easily obtain by accessing to the application.
+    </description>
+
+    <author href="http://www.wooho.fun" email="wkv.malaysia@gmail.com">
+        WKV Group
+    </author>
+	
+	<content src="index.html" />
+
+    <!--
+        If you do not want any permissions to be added to your app, add the
+        following tag to your config.xml; you will still have the INTERNET
+        permission on your app, which PhoneGap requires.
+	 
+    <preference name="permissions"                value="none"/>
+	-->
+
+    <!-- Customize your app and platform with the preference element. -->
+    <preference name="orientation"                value="portrait" />        <!-- all: default means both landscape and portrait are enabled -->
+    <preference name="target-device"              value="universal" />      <!-- all: possible values handset, tablet, or universal -->
+    <preference name="fullscreen"                 value="false" />           <!-- all: hides the status bar at the top of the screen -->
+    <preference name="webviewbounce"              value="true" />           <!-- ios: control whether the screen 'bounces' when scrolled beyond the top -->
+    <preference name="prerendered-icon"           value="false" />           <!-- ios: if icon is prerendered, iOS will not apply it's gloss to the app's icon on the user's home screen -->
+    <preference name="stay-in-webview"            value="false" />          <!-- ios: external links should open in the default browser, 'true' would use the webview the app lives in -->
+    <preference name="ios-statusbarstyle"         value="black-opaque" />   <!-- ios: black-translucent will appear black because the PhoneGap webview doesn't go beneath the status bar -->
+    <preference name="detect-data-types"          value="true" />           <!-- ios: controls whether data types (such as phone no. and dates) are automatically turned into links by the system -->
+    <preference name="exit-on-suspend"            value="false" />          <!-- ios: if set to true, app will terminate when home button is pressed -->
+    <preference name="show-splash-screen-spinner" value="false" />           <!-- ios: if set to false, the spinner won't appear on the splash screen during app loading -->
+    <preference name="auto-hide-splash-screen"    value="true" />           <!-- ios: if set to false, the splash screen must be hidden using a JavaScript API -->
+    <preference name="disable-cursor"             value="false" />          <!-- blackberry: prevents a mouse-icon/cursor from being displayed on the app -->
+    <preference name="android-installLocation"    value="auto" />           <!-- android: app install location. 'auto' will choose. 'internalOnly' is device memory. 'preferExternal' is SDCard. -->
+	<!--
+        Define a specific version of PhoneGap to build into your app.
+    -->
+	<preference name="phonegap-version"       value="cli-9.0.0" />
+
+    <!-- Plugins -->
+	<plugin name="cordova-plugin-x-socialsharing" />
+	<plugin name="phonegap-plugin-barcodescanner" />
+	<plugin name="onesignal-cordova-plugin" spec="2.4.1" source="npm" />
+	<plugin name="cordova-clipboard" />
+	
+	<plugin name="cordova-plugin-battery-status" />
+    <plugin name="cordova-plugin-camera" />
+	<plugin name="cordova-plugin-console" />
+	<plugin name="cordova-plugin-contacts" />
+	<plugin name="cordova-plugin-device" />
+	<plugin name="cordova-plugin-dialogs" />
+	<plugin name="cordova-plugin-file" />
+	<plugin name="cordova-plugin-geolocation" />
+	<plugin name="cordova-plugin-inappbrowser" />
+	<plugin name="cordova-plugin-media" />
+	<plugin name="cordova-plugin-media-capture" />
+	<plugin name="cordova-plugin-network-information" />
+	<plugin name="cordova-plugin-statusbar" />
+	<plugin name="cordova-plugin-vibration" />
+    <!-- Core plugins -->
+	<!--
+    <plugin name="cordova-plugin-battery-status" />
+    <plugin name="cordova-plugin-camera" />
+    <plugin name="cordova-plugin-media-capture" />
+    <plugin name="cordova-plugin-console" />
+    <plugin name="cordova-plugin-contacts" />
+    <plugin name="cordova-plugin-device" />
+    <plugin name="cordova-plugin-device-motion" />
+    <plugin name="cordova-plugin-device-orientation" />
+    <plugin name="cordova-plugin-dialogs" />
+    <plugin name="cordova-plugin-file" />
+    <plugin name="cordova-plugin-file-transfer" />
+    <plugin name="cordova-plugin-geolocation" />
+    <plugin name="cordova-plugin-globalization" />
+    <plugin name="cordova-plugin-inappbrowser" />
+    <plugin name="cordova-plugin-media" />
+    <plugin name="cordova-plugin-network-information" />
+    <plugin name="cordova-plugin-splashscreen" />
+    <plugin name="cordova-plugin-vibration" />
+	 -->
+	
+    <!-- Third party plugins -->
+    <!-- A list of available plugins are available at https://build.phonegap.com/plugins -->
+    <!--
+        <plugin name="com.phonegap.plugins.barcodescanner" />
+    -->
+
+    <!-- Define app icon for each platform. -->
+	<icon src="icon.png" />
+	
+	<platform name="android">
+        <icon src="res/android/ldpi.png" density="ldpi" />
+        <icon src="res/android/mdpi.png" density="mdpi" />
+        <icon src="res/android/hdpi.png" density="hdpi" />
+        <icon src="res/android/xhdpi.png" density="xhdpi" />
+        <icon src="res/android/xxhdpi.png" density="xxhdpi" />
+        <icon src="res/android/xxxhdpi.png" density="xxxhdpi" />
+    </platform>
+	
+	<platform name="ios">
+        <icon src="res/ios/icon-60@3x.png" width="180" height="180" />
+        <icon src="res/ios/icon-60.png" width="60" height="60" />
+        <icon src="res/ios/icon-60@2x.png" width="120" height="120" />
+        <icon src="res/ios/icon-76.png" width="76" height="76" />
+        <icon src="res/ios/icon-76@2x.png" width="152" height="152" />
+        <icon src="res/ios/icon-40.png" width="40" height="40" />
+        <icon src="res/ios/icon-40@2x.png" width="80" height="80" />
+        <icon src="res/ios/icon.png" width="57" height="57" />
+        <icon src="res/ios/icon@2x.png" width="114" height="114" />
+        <icon src="res/ios/icon-72.png" width="72" height="72" />
+        <icon src="res/ios/icon-72@2x.png" width="144" height="144" />
+        <icon src="res/ios/icon-167.png" width="167" height="167" />
+        <icon src="res/ios/icon-small.png" width="29" height="29" />
+        <icon src="res/ios/icon-small@2x.png" width="58" height="58" />
+        <icon src="res/ios/icon-small@3x.png" width="87" height="87" />
+        <icon src="res/ios/icon-50.png" width="50" height="50" />
+        <icon src="res/ios/icon-50@2x.png" width="100" height="100" />
+        <icon src="res/ios/icon-83.5@2x.png" width="167" height="167" />
+    </platform>
+
+    <platform name="ios">
+		<splash src="res/ios/Default~iphone.png" width="320" height="480"/>
+		<splash src="res/ios/Default@2x~iphone.png" width="640" height="960"/>
+		<splash src="res/ios/Default-Portrait~ipad.png" width="768" height="1024"/>
+		<splash src="res/ios/Default-Portrait@2x~ipad.png" width="1536" height="2048"/>
+		<splash src="res/ios/Default-Landscape~ipad.png" width="1024" height="768"/>
+		<splash src="res/ios/Default-Landscape@2x~ipad.png" width="2048" height="1536"/>
+		<splash src="res/ios/Default-568h@2x~iphone.png" width="640" height="1136"/>
+		<splash src="res/ios/Default-667h.png" width="750" height="1334"/>
+		<splash src="res/ios/Default-736h.png" width="1242" height="2208"/>
+		<splash src="res/ios/Default-Landscape-736h.png" width="2208" height="1242"/>
+	</platform>
+
+    <gap:config-file platform="ios" parent="CFBundleShortVersionString">
+    <string>250</string>
+    </gap:config-file>
+	
+	<platform name="ios">
+		<edit-config target="NSCameraUsageDescription" file="*-Info.plist" mode="merge" overwrite="true">
+			<string>Camera permission is required because the camera is needed to scan the 2D barcode to add, update, check the inventory.</string>
+		</edit-config>
+		<edit-config target="NSLocationAlwaysUsageDescription" file="*-Info.plist" mode="merge" overwrite="true">
+			<string>Location permission is required because there is a feature of this apps that allow the crew to clock in based on their current location.</string>
+		</edit-config>
+		<edit-config target="NSLocationWhenInUseUsageDescription" file="*-Info.plist" mode="merge" overwrite="true">
+			<string>Location permission is required because there is a feature of this apps that allow the crew to clock in based on their current location.</string>
+		</edit-config>
+	</platform>
+    <!--
+        Define access to external domains.
+        <access />            - a blank access tag denies access to all external resources.
+        <access origin="*" /> - a wildcard access tag allows access to all external resource.
+        Otherwise, you can specify specific domains:
+        <access origin="http://phonegap.com" />                    - allow any secure requests to http://phonegap.com/
+        <access origin="http://phonegap.com" subdomains="true" />  - same as above, but including subdomains, such as http://build.phonegap.com/
+        <access origin="http://phonegap.com" browserOnly="true" /> - only allows http://phonegap.com to be opened by the child browser.
+    -->
+
+    <access origin="*"/>
+    <!-- Added the following intents to support the removal of whitelist code from base cordova to a plugin -->
+    <!-- Whitelist configuration. Refer to https://cordova.apache.org/docs/en/edge/guide_appdev_whitelist_index.md.html -->
+    <plugin name="cordova-plugin-whitelist" version="1.3.3" />
+    <allow-navigation href="*" />
+	<allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+    <platform name="android">
+        <allow-intent href="market:*" />
+		<preference name="android-minSdkVersion" value="19" /> 
+		<preference name="android-targetSdkVersion" value="28" /> 
+		<resource-file src="locales/android/drawable-mdpi/ic_stat_onesignal_default.png" target="app/src/main/res/drawable-mdpi/ic_stat_onesignal_default.png" />
+		<resource-file src="locales/android/drawable-hdpi/ic_stat_onesignal_default.png" target="app/src/main/res/drawable-hdpi/ic_stat_onesignal_default.png" />
+		<resource-file src="locales/android/drawable-xhdpi/ic_stat_onesignal_default.png" target="app/src/main/res/drawable-xhdpi/ic_stat_onesignal_default.png" />
+		<resource-file src="locales/android/drawable-xxhdpi/ic_stat_onesignal_default.png" target="app/src/main/res/drawable-xxhdpi/ic_stat_onesignal_default.png" />
+		<resource-file src="locales/android/drawable-xxxhdpi/ic_stat_onesignal_default.png" target="app/src/main/res/drawable-xxxhdpi/ic_stat_onesignal_default.png" />
+		<resource-file src="locales/android/mipmap/icon.png" target="app/src/main/res/mipmap/icon.png" />
+    </platform>
+    <platform name="ios">
+        <allow-intent href="itms:*" />
+        <allow-intent href="itms-apps:*" />
+    </platform>
+</widget>

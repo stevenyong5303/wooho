@@ -1,0 +1,169 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="description" content="puzzle bobble game">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>WOOHO | Puzzle Bobble</title>
+	<style>
+		html, body{
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+		}
+		
+		#control, #score{
+			position: absolute;
+			z-index: 100;
+			opacity: 0.5;
+		}
+		
+		#score{
+			top: 10px;
+			width: 530px;
+		}
+		
+		#score div{
+			width: 211px;
+			margin: 0 auto;
+			font-family: courier;
+			color: #ffffff;
+			font-size: 24px;
+		}
+		
+		#ctrl_left{
+			position: absolute;
+			top: 685px;
+			left: 15px;
+		}
+		
+		#ctrl_shoot{
+			position: absolute;
+			top: 675px;
+			left: 190px;
+		}
+		
+		#ctrl_right{
+			position: absolute;
+			top: 685px;
+			left: 385px;
+		}
+	</style>
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-4C17T6BLHF"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'G-4C17T6BLHF');
+	</script>
+</head>
+
+<body>
+
+<script src="./dist/jquery.min.js"></script>
+<script src="./dist/woof.js"></script>
+<script src="./dist/script.js"></script>
+
+<div id="score">
+	<div>
+		Score : <span>000000</span>
+	</div>
+</div>
+<div id="control">
+	<a id="ctrl_left"><img src="images/move-left-big.png" width="100" height="100"/></a>
+	<a id="ctrl_shoot" data-gameover="0"><img src="images/move-up-big.png" width="120" height="120"/></a>
+	<a id="ctrl_right"><img src="images/move-right-big.png" width="100" height="100"/></a>
+</div>
+<div id="sound">
+	<audio class="sound_touch" src="res/touch.wav" type="audio/wav"></audio>
+	<audio class="sound_explode" src="res/explode.wav" type="audio/wav"></audio>
+	<audio class="sound_gameover" src="res/gameover.mp3" type="audio/mpeg"></audio>
+</div>
+<script>
+	$(document).ready(function(){
+		$('#ctrl_left').on('touchstart mousedown', function(evt){
+			var e = 37;
+			
+			Podium = {};
+			var n = document.createEvent("KeyboardEvent");
+			Object.defineProperty(n, "keyCode", {
+				get: function() {
+					return this.keyCodeVal
+				}
+			}), n.initKeyboardEvent ? n.initKeyboardEvent("keydown", !0, !0, document.defaultView, e, e, "", "", !1, "") : n.initKeyEvent("keydown", !0, !0, document.defaultView, !1, !1, !1, !1, e, 0), n.keyCodeVal = e, document.body.dispatchEvent(n)
+		
+			evt.preventDefault();
+		});
+		
+		$('#ctrl_left').on('touchend mouseup', function(evt){
+			var e = 37;
+			
+			Podium = {};
+			var n = document.createEvent("KeyboardEvent");
+			Object.defineProperty(n, "keyCode", {
+				get: function() {
+					return this.keyCodeVal
+				}
+			}), n.initKeyboardEvent ? n.initKeyboardEvent("keyup", !0, !0, document.defaultView, e, e, "", "", !1, "") : n.initKeyEvent("keyup", !0, !0, document.defaultView, !1, !1, !1, !1, e, 0), n.keyCodeVal = e, document.body.dispatchEvent(n)
+		});
+		
+		$('#ctrl_shoot').on('touchstart mousedown', function(evt){
+			var e = 32;
+			
+			Podium = {};
+			var n = document.createEvent("KeyboardEvent");
+			Object.defineProperty(n, "keyCode", {
+				get: function() {
+					return this.keyCodeVal
+				}
+			}), n.initKeyboardEvent ? n.initKeyboardEvent("keydown", !0, !0, document.defaultView, e, e, "", "", !1, "") : n.initKeyEvent("keydown", !0, !0, document.defaultView, !1, !1, !1, !1, e, 0), n.keyCodeVal = e, document.body.dispatchEvent(n)
+		
+			evt.preventDefault();
+		});
+		
+		$('#ctrl_shoot').on('touchend mouseup', function(evt){
+			var e = 32;
+			
+			Podium = {};
+			var n = document.createEvent("KeyboardEvent");
+			Object.defineProperty(n, "keyCode", {
+				get: function() {
+					return this.keyCodeVal
+				}
+			}), n.initKeyboardEvent ? n.initKeyboardEvent("keyup", !0, !0, document.defaultView, e, e, "", "", !1, "") : n.initKeyEvent("keyup", !0, !0, document.defaultView, !1, !1, !1, !1, e, 0), n.keyCodeVal = e, document.body.dispatchEvent(n)
+		});
+		
+		$('#ctrl_right').on('touchstart mousedown', function(evt){
+			var e = 39;
+			
+			Podium = {};
+			var n = document.createEvent("KeyboardEvent");
+			Object.defineProperty(n, "keyCode", {
+				get: function() {
+					return this.keyCodeVal
+				}
+			}), n.initKeyboardEvent ? n.initKeyboardEvent("keydown", !0, !0, document.defaultView, e, e, "", "", !1, "") : n.initKeyEvent("keydown", !0, !0, document.defaultView, !1, !1, !1, !1, e, 0), n.keyCodeVal = e, document.body.dispatchEvent(n)
+		
+			evt.preventDefault();
+		});
+		
+		$('#ctrl_right').on('touchend mouseup', function(evt){
+			var e = 39;
+			
+			Podium = {};
+			var n = document.createEvent("KeyboardEvent");
+			Object.defineProperty(n, "keyCode", {
+				get: function() {
+					return this.keyCodeVal
+				}
+			}), n.initKeyboardEvent ? n.initKeyboardEvent("keyup", !0, !0, document.defaultView, e, e, "", "", !1, "") : n.initKeyEvent("keyup", !0, !0, document.defaultView, !1, !1, !1, !1, e, 0), n.keyCodeVal = e, document.body.dispatchEvent(n)
+		});
+	});
+</script>
+</body>
+	
+</html>

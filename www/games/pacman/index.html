@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=550" />
+		<link rel="stylesheet" type="text/css" href="css/pacman.css" />
+		<link rel="stylesheet" type="text/css" href="css/pacman-home.css" />
+		<script type="text/javascript" src="js/jquery.js"></script>
+		<script type="text/javascript" src="js/jquery-buzz.js"></script>
+		<script type="text/javascript" src="js/game.js"></script>
+		<script type="text/javascript" src="js/tools.js"></script>
+		<script type="text/javascript" src="js/board.js"></script>
+		<script type="text/javascript" src="js/paths.js"></script>
+		<script type="text/javascript" src="js/bubbles.js"></script>
+		<script type="text/javascript" src="js/fruits.js"></script>
+		<script type="text/javascript" src="js/pacman.js"></script>
+		<script type="text/javascript" src="js/ghosts.js"></script>
+		<script type="text/javascript" src="js/sound.js"></script>
+		
+		<script type="text/javascript">
+			function simulateKeyup(code) { 
+				var e = jQuery.Event("keyup");
+				e.keyCode = code;
+				jQuery('body').trigger(e);
+			}
+			function simulateKeydown(code) { 
+				var e = jQuery.Event("keydown");
+				e.keyCode = code;
+				jQuery('body').trigger(e);
+			}
+			
+			$(document).ready(function() { 
+				//$.mobile.loading().hide();
+				loadAllSound();
+				
+				$(".sound").click(function(e) { 
+					e.stopPropagation();
+					
+					var sound = $(this).attr("data-sound");
+					if ( sound === "on" ) { 
+						$(".sound").attr("data-sound", "off");
+						$(".sound").find("img").attr("src", "img/sound-off.png");
+						GROUP_SOUND.mute();
+					} else { 
+						$(".sound").attr("data-sound", "on");
+						$(".sound").find("img").attr("src", "img/sound-on.png");
+						GROUP_SOUND.unmute();
+					}
+				});
+				
+				$(".github,.putchu").click(function(e) { 
+					e.stopPropagation();
+				});
+				
+				$("#control-up, #control-up-second, #control-up-big").on("mousedown touchstart", function(e) { 
+					e.preventDefault();
+					simulateKeydown(38);
+					simulateKeyup(13);
+				});
+				$("#control-down, #control-down-second, #control-down-big").on("mousedown touchstart", function(e) { 
+					e.preventDefault();
+					simulateKeydown(40);
+					simulateKeyup(13);
+				});
+				$("#control-left, #control-left-big").on("mousedown touchstart", function(e) { 
+					e.preventDefault();
+					simulateKeydown(37);
+					simulateKeyup(13);
+				});
+				$("#control-right, #control-right-big").on("mousedown touchstart", function(e) { 
+					e.preventDefault();
+					simulateKeydown(39);
+					simulateKeyup(13);
+				});
+
+				
+				$("body").keyup(function(e) { 
+					KEYDOWN = false;
+				});
+				
+				$("body").keydown(function(e) { 
+					KEYDOWN = true;
+					if (PACMAN_DEAD && !LOCK) { 
+						erasePacman();
+						resetPacman();
+						drawPacman();
+						
+						eraseGhosts();
+						resetGhosts();
+						drawGhosts();
+						moveGhosts();
+						
+						blinkSuperBubbles();
+						
+					} else if (e.keyCode === 80 && !PACMAN_DEAD && !LOCK) { 
+						if (PAUSE) { 
+							resumeGame();
+						} else { 
+							pauseGame();
+						}
+					} else if (GAMEOVER) { 
+						// put button to init game
+					}
+				});
+				
+				initGame(true);
+				
+				document.addEventListener('touchstart',function(event){
+					startx = event.touches[0].pageX;
+					starty = event.touches[0].pageY;
+				});
+
+				document.addEventListener('touchmove',function(event){
+					event.preventDefault();
+				});
+
+				document.addEventListener('touchend',function(event){
+					documentWidth = window.screen.width;
+					endx = event.changedTouches[0].pageX;
+					endy = event.changedTouches[0].pageY;
+					
+					var deltax = endx - startx;
+					var deltay = endy - starty;
+					
+					if(Math.abs(deltax) <0.2*documentWidth&& Math.abs(deltay)<0.2*documentWidth){
+						return;
+					}
+					
+					if(Math.abs(deltax) >= Math.abs(deltay)){
+						if(deltax > 0){
+							movePacman(1);
+						}else{
+							movePacman(3);
+						}
+					}else{
+						if(deltay > 0){
+							movePacman(2);
+						}else{
+							movePacman(4);
+						}
+					}
+				});
+			});
+		</script>
+	
+		<title>WOOHO | Pac-Man</title>
+		<script async src="https://www.googletagmanager.com/gtag/js?id=G-4C17T6BLHF"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'G-4C17T6BLHF');
+	</script>
+	</head>
+		
+	<body>
+	
+		<div id="sound"></div>
+	
+		<div id="panel">
+			<div id="score"><h2>1UP</h2><span>00</span></div>
+			<div id="highscore"><h2>High Score</h2><span>00</span></div>
+			<div id="board">
+				<canvas id="canvas-board"></canvas>
+				<canvas id="canvas-paths"></canvas>
+				<canvas id="canvas-bubbles"></canvas>
+				<canvas id="canvas-fruits"></canvas>
+				<canvas id="canvas-pacman"></canvas>
+				<canvas id="canvas-ghost-blinky"></canvas>
+				<canvas id="canvas-ghost-pinky"></canvas>
+				<canvas id="canvas-ghost-inky"></canvas>
+				<canvas id="canvas-ghost-clyde"></canvas>
+			</div>
+			<canvas id="canvas-lifes"></canvas>
+			<canvas id="canvas-level-fruits"></canvas>
+			<div id="message"></div>
+			<a class="sound" href="javascript:void(0);" data-sound="on"><img src="img/sound-on.png" alt="" border="0"></a>
+		</div>
+	</body>
+	
+</html>

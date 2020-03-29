@@ -1,0 +1,85 @@
+@media (min-width:630px) and (min-height:630px){
+	.popup:not(.popup-tablet-fullscreen){
+		width:630px;
+		height:630px;
+		left:50%;
+		top:50%;
+		margin-left:-315px;
+		margin-top:-315px;
+		-webkit-transform:translate3d(0,100vh,0);
+		transform:translate3d(0,100vh,0)
+	}
+	.popup:not(.popup-tablet-fullscreen).modal-in{
+		-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)
+	}.popup:not(.popup-tablet-fullscreen).modal-out{
+		-webkit-transform:translate3d(0,100vh,0);
+		transform:translate3d(0,100vh,0)
+	}
+}
+@media (min-width:630px) and (min-height:630px){
+	.md .popup:not(.popup-tablet-fullscreen){
+		-webkit-box-shadow:0px 20px 44px rgba(0,0,0,.5);
+		box-shadow:0px 20px 44px rgba(0,0,0,.5)
+	}
+}
+#live .page-content iframe{
+	transform: rotate(90deg);
+	position: absolute;
+}
+div#scoreDay.tab, div#scoreWeek.tab, div#scoreMonth.tab{
+	padding-top: 0;
+}
+#game .page-content.iframe{
+	overflow: hidden;
+}
+#game .page-content.iframe iframe{
+	z-index: 10;
+}
+#ptc .media-list .item-inner{
+	margin: auto 0px auto 20px;
+}
+#ptc .media-list .item-inner:after{
+	background: none;
+}
+div.item-media img, img.state{
+	border-radius: 5px;
+}
+#app .popover-leaderboard{
+	width: calc(100% - 100px);
+    margin: 100px 50px;
+}
+#app .navbar .navbar-inner .left, #app .navbar .navbar-inner .right{
+	width: 64px;
+	height: 56px;
+	margin: 0;
+}
+#app .navbar .navbar-inner .title{
+	margin: 0 auto;
+}
+#stg .item-link.item-content .item-inner{
+	margin-top: 2px;
+}
+.card-header p.row{
+	width: 100%;
+}
+.card-header p.row img{
+	margin: 0 auto 0;
+}
+#app .view-main div.page{
+	overflow: auto;
+}
+body{
+	overscroll-behavior: none;
+	-webkit-touch-callout: none;
+    -webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+iframe{
+	position: absolute;
+	overflow: hidden;
+	border: none;
+}

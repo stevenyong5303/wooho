@@ -1,0 +1,7 @@
+**/.DS_Store
+.babelrc
+node_modules/
+package-lock.json
+package.json
+puzzle-bobble.sublime-project
+puzzle-bobble.sublime-workspace

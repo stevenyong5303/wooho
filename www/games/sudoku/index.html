@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WOOHO | Sudoku</title>
+	
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+	
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Montserrat"/>
+    <link rel="stylesheet" href="css/sudoku.css" />
+    
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+  	<script type="text/javascript" src="js/sudoku.js" ></script>
+  	<script type="text/javascript">
+  		$(document).ready(function () {
+  			$(".sudoku-game").sudoku({});
+  		});
+  	</script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4C17T6BLHF"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'G-4C17T6BLHF');
+	</script>
+  </head>
+  <body style="background-color:#ffffff;">
+	<div id="score">
+		<div>
+			Score : <span>000000</span>
+		</div>
+	</div>
+	<div class="sudoku-bk">
+		<div class="sudoku-game"></div>
+	</div>
+	<div id="sound">
+		<audio class="sound_touch" src="res/touch.wav" type="audio/wav"></audio>
+		<audio class="sound_true" src="res/true.ogg" type="audio/ogg"></audio>
+		<audio class="sound_false" src="res/false.mp3" type="audio/mpeg"></audio>
+	</div>
+  </body>
+</html>
