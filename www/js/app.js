@@ -4,10 +4,10 @@ var STORAGE = window.localStorage;
 var advertisementInterval, advertisementTimer = 0, gameInterval, gameTimer = 0;
 var apps = new Framework7({
 			  root: '#app',
-			  id: 'com.wkv.wooho',
-			  name: 'Wooho',
+			  id: 'com.wkv.game',
+			  name: 'WOOHO',
 			  theme: 'md',
-			  version: "1.0.1",
+			  version: "1.0.3",
 			  rtl: false,
 			  language: "en-US"
 		  });

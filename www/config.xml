@@ -4,12 +4,12 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "com.wkv.game"
-        version   = "1.0.2">
+        version   = "1.0.3">
 
-    <name>WKV</name>
+    <name>WOHOO</name>
 
     <description>
-        WKV Application serves as a platform for of WKV’s member to obtain basic information and calculation method can easily obtain by accessing to the application.
+        WOOHO is a play and win platform consist of live show and many mini games.
     </description>
 
     <author href="http://www.wooho.fun" email="wkv.malaysia@gmail.com">
