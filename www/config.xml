@@ -4,7 +4,7 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "com.wkv.game"
-        version   = "1.0.5">
+        version   = "1.0.6">
 
     <name>WOHOO</name>
 
@@ -46,7 +46,7 @@
 	<preference name="phonegap-version"       value="cli-9.0.0" />
 
     <!-- Plugins -->
-	<plugin name="cordova-plugin-admob-free" />
+	<!-- <plugin name="cordova-plugin-admob-free" /> -->
 	
 	<plugin name="cordova-plugin-device" />
 	<plugin name="cordova-plugin-inappbrowser" />
@@ -128,7 +128,7 @@
 	</platform>
 
     <gap:config-file platform="ios" parent="CFBundleShortVersionString">
-    <string>4</string>
+    <string>6</string>
     </gap:config-file>
 
     <!--
