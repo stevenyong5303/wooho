@@ -7,7 +7,7 @@ var apps = new Framework7({
 			  id: 'com.wkv.game',
 			  name: 'WOOHO',
 			  theme: 'md',
-			  version: "1.0.6",
+			  version: "1.0.7",
 			  rtl: false,
 			  language: "en-US"
 		  });
