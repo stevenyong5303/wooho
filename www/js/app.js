@@ -1,13 +1,13 @@
 var $$ = Dom7;
 var sys = new Object();
 var STORAGE = window.localStorage;
-var advertisementInterval, advertisementTimer = 0, gameInterval, gameTimer = 0;
+var requestInterval, requestTimer = 0, gameInterval, gameTimer = 0;
 var apps = new Framework7({
 			  root: '#app',
 			  id: 'com.wkv.game',
 			  name: 'WOOHO',
 			  theme: 'md',
-			  version: "1.0.4",
+			  version: "1.0.5",
 			  rtl: false,
 			  language: "en-US"
 		  });
@@ -36,29 +36,348 @@ var app = {
 $(document).ready(function(){
 	var ajaxData = '', postAjaxData = '';
 	
-	// Live Page
+	// Welcome Page
 	
-	$('.btn-wlv').on('click', function(){
-		var w = window.innerWidth,
-			h = window.innerHeight;
-		var sizeW = (w/500),
-			sizeH = (h/(889+56));
-			
-		if(sizeW < sizeH){
-			$('#live iframe').css('transform', 'scale(' + sizeW + ') rotate(90deg)');
-			$('#live iframe').css('top', ((((sizeW*889)-889)/2)+250+'px'));
-			$('#live iframe').css('left', (((((sizeW*500)-500)/2)-195)+'px'));
+	$('.wcm-btn-lgg').on('click', function(){
+		var cur = $('#wcm').data('lgg');
+		
+		if(cur == 'en'){
+			$('#wcm').data('lgg', 'bm');
+			cur = 'bm';
+		}else if(cur == 'bm'){
+			$('#wcm').data('lgg', 'cn');
+			cur = 'cn';
+		}else if(cur == 'cn'){
+			$('#wcm').data('lgg', 'tm');
+			cur = 'tm';
 		}else{
-			$('#live iframe').css('transform', 'scale(' + sizeH + ') rotate(90deg)');
-			$('#live iframe').css('top', ((((sizeH*889)-889)/2)+250+'px'));
-			$('#live iframe').css('left', (((((sizeH*500)-500)/2)-195)+'px'));
+			$('#wcm').data('lgg', 'en');
+			cur = 'en';
 		}
 		
-		apps.loginScreen.open($('#live'), true);
+		$('.translate').each(function(){
+			$(this).text($(this).data(cur));
+		});
+		
+		$('.translate-placeholder input').each(function(){
+			$(this).attr('placeholder', $(this).data(cur));
+		});
+		
+		$('.translate-error input').each(function(){
+			$(this)[0].dataset.errorMessage = $(this).data(('e'+cur));
+		});
 	});
 	
-	$('#live .navbar .link.back').on('click', function(){
-		apps.loginScreen.close($('#live'), true);
+	$('input.wcm-psk').on('keyup', function(){
+		$('.input-state').css('background-image', 'none');
+		
+		if($(this).val().length == 5){
+			var psk = parseInt($(this).val()),
+				state = 'malaysia';
+			
+			if(psk >= 50000 && psk <= 60000){
+				state = 'kualalumpur';
+			}else if(psk >= 62300 && psk <= 62988){
+				state = 'putrajaya';
+			}else if(psk >= 87000 && psk <= 87034){
+				state = 'labuan';
+			}else if((psk >= 40000 && psk <= 48300) || (psk >= 63000 && psk <= 68100)){
+				state = 'selangor';
+			}else if(psk >= 20000 && psk <= 24300){
+				state = 'terengganu';
+			}else if(psk >= 93000 && psk <= 98859){
+				state = 'sarawak';
+			}else if(psk >= 88000 && psk <= 91309){
+				state = 'sabah';
+			}else if(psk >= 5000 && psk <= 9810){
+				state = 'kedah';
+			}else if(psk >= 15000 && psk <= 18500){
+				state = 'kelantan';
+			}else if(psk >= 70000 && psk <= 73509){
+				state = 'negerisembilan';
+			}else if(psk >= 10000 && psk <= 14400){
+				state = 'penang';
+			}else if(psk >= 79000 && psk <= 86900){
+				state = 'johor';
+			}else if(psk >= 75000 && psk <= 78309){
+				state = 'melacca';
+			}else if(psk >= 1000 && psk <= 2999){
+				state = 'perlis';
+			}else if(psk >= 30000 && psk <= 36810){
+				state = 'perak';
+			}else if((psk >= 25000 && psk <= 28800) || (psk >= 39000 && psk <= 39200) || psk == 49000 || psk == 69000){
+				state = 'pahang';
+			}
+			
+			$('.input-state').css('background-image', ('url(img/state/' + state + '.png)'));
+			$('input.wcm-psk').data('state', state);
+		}
+	});
+	
+	$('.wcm-vfc').on('keyup', function(){
+		var vfc = $(this).val();
+		
+		if(sys.isEmpty(vfc)){
+			$('.wcm-btn-lgn').parent('p.row').hide();
+			$('.wcm-btn-rvc').parent('p.row').show();
+		}else{
+			$('.wcm-btn-rvc').parent('p.row').hide();
+			$('.wcm-btn-lgn').parent('p.row').show();
+		}
+	});
+	
+	$('.wcm-btn-rvc').on('click', function(){
+		var ctn = $('input.wcm-ctn').val(),
+			lgg = $('#wcm').data('lgg');
+		
+		if(!sys.isEmpty(ctn)){
+			var ctnStr = ctn + '';
+			
+			if((ctnStr.charAt(0) == '0') && (ctnStr.charAt(1) == '1') && ((ctnStr.length == 10) || (ctnStr.length == 11))){
+				var DATA = JSON.parse(STORAGE.getItem('data'));
+					
+				ajaxData = {
+					'ctn' : ctn,
+					'uid' : DATA.profile.uid
+				};
+				postAjaxData = "ACT=" + encodeURIComponent('request_verification')
+							 + "&DATA=" + encodeURIComponent(sys.serialize(ajaxData));
+						  
+				$.ajax({
+					type: 'POST',
+					url: 'http://wooho.fun/',
+					data: postAjaxData,
+					beforeSend: function(){
+						apps.dialog.preloader();
+					},
+					success: function(str){
+						apps.dialog.close();
+						
+						if(str.indexOf('200 OK') != -1){
+							$('.wcm-btn-rvc').prop('disabled', true);
+							$('.wcm-btn-rvc').addClass('disabled');
+							$('.wcm-btn-rvc').data('verification', str.substr(8,32));
+							$('.wcm-btn-rvc').data('contact', ctn);
+							STORAGE.setItem('woohoTempId', str.substr(8,32));
+							
+							var sucStr = '';
+							
+							if(lgg=='bm'){
+								sucStr = ('Kod pengesahan akan dihantar ke +6' + ctn + ' dalam satu minit.');
+							}else if(lgg=='cn'){
+								sucStr = ('验证码将在一分钟内发送给+6' + ctn + '。');
+							}else if(lgg=='tm'){
+								sucStr = ('சரிபார்ப்புக் குறியீடு ஒரு நிமிடத்தில் +6' + ctn + ' க்கு அனுப்பப்படும்.');
+							}else{
+								sucStr = ('The verification code will send to +6' + ctn + ' in a minute.');
+							}
+							
+							apps.toast.create({
+								icon: '<i class="material-icons">email</i>',
+								text: sucStr,
+								position: 'center',
+								closeTimeout: 15000,
+							}).open();
+							
+							requestInterval = window.setInterval(function(){
+								requestTimer++;
+								
+								if(requestTimer>120){
+									window.clearInterval(requestInterval);
+									requestTimer = 0;
+									$('.wcm-btn-rvc').prop('disabled', false);
+									$('.wcm-btn-rvc').removeClass('disabled');
+								}
+							}, 1000);
+						}else{
+							apps.toast.create({
+								icon: '<i class="material-icons">bug_report</i>',
+								text: 'Server error!',
+								position: 'center',
+								closeTimeout: 1000,
+							}).open();
+						}
+					}
+				});
+			}else{
+				var str = '';
+				
+				if(lgg=='bm'){
+					str = 'Nombor telefon tidak sah.';
+				}else if(lgg=='cn'){
+					str = '联系电话无效。';
+				}else if(lgg=='tm'){
+					str = 'தவறான தொடர்பு எண்.';
+				}else{
+					str = 'Invalid contact number.';
+				}
+				
+				apps.toast.create({
+					icon: '<i class="material-icons">cancel</i>',
+					text: str,
+					position: 'center',
+					closeTimeout: 1000,
+				}).open();
+			}
+		}else{
+			var str = '';
+			
+			if(lgg=='bm'){
+				str = 'Nombor telefon tidak boleh dibiarkan kosong.';
+			}else if(lgg=='cn'){
+				str = '联系电话不能为空。';
+			}else if(lgg=='tm'){
+				str = 'தொடர்பு எண்ணை காலியாக விட முடியாது.';
+			}else{
+				str = 'Contact number cannot be leave empty.';
+			}
+			
+			apps.toast.create({
+				icon: '<i class="material-icons">cancel</i>',
+				text: str,
+				position: 'center',
+				closeTimeout: 1000,
+			}).open();
+		}
+	});
+	
+	$('.wcm-btn-lgn').on('click', function(){
+		var usn = $('input.wcm-usn').val(),
+			state = $('input.wcm-psk').data('state'),
+			vfc = $('input.wcm-vfc').val(),
+			lgg = $('#wcm').data('lgg');
+		
+		if(!sys.isEmpty(usn)){
+			if(!sys.isEmpty($('input.wcm-psk').val())){
+				if(md5((vfc + '-' + $('input.wcm-ctn').val())) == STORAGE.getItem('woohoTempId')){
+					var DATA = JSON.parse(STORAGE.getItem('data'));
+					var uid = DATA.profile.uid;
+					
+					ajaxData = {
+						'ctn' : $('input.wcm-ctn').val(),
+						'vfc' : vfc,
+						'uid' : DATA.profile.uid
+					};
+					postAjaxData = "ACT=" + encodeURIComponent('check_verification')
+								 + "&DATA=" + encodeURIComponent(sys.serialize(ajaxData));
+							  
+					$.ajax({
+						type: 'POST',
+						url: 'http://wooho.fun/',
+						data: postAjaxData,
+						beforeSend: function(){
+							apps.dialog.preloader();
+						},
+						success: function(str){
+							apps.dialog.close();
+							
+							if(str == '200 OK'){
+								var DATA = {
+									'profile': {
+										'username' : usn,
+										'contact' : $('input.wcm-ctn').val(),
+										'state' : $('input.wcm-psk').data('state'),
+										'uid' : uid
+									},
+									'configuration' : {
+										'language' : lgg,
+										'sound' : true
+									},
+									'coin' : {
+										'gY8aH' : true,
+										'YgjQ' : false,
+										'TadCax' : 50,
+										'SgQwef' : 'b961685dc6333717d9d8adb3b358a4e7'
+									}
+								};
+								
+								STORAGE.setItem('data', JSON.stringify(DATA));
+								STORAGE.removeItem('woohoTempId');
+								
+								var sucStr = '';
+								
+								if(lgg=='bm'){
+									sucStr = ('Hello ' + usn + '! Selamat datang ke WOOHO.');
+								}else if(lgg=='cn'){
+									sucStr = (usn + '，您好！欢迎来到WOOHO。');
+								}else if(lgg=='tm'){
+									sucStr = ('வணக்கம் ' + usn + '! WOOHO க்கு வருக.');
+								}else{
+									sucStr = ('Hello ' + usn + '! Welcome to WOOHO.');
+								}
+								
+								apps.toast.create({
+									icon: '<i class="material-icons">done_outline</i>',
+									text: sucStr,
+									position: 'center',
+									closeTimeout: 2000,
+								}).open();
+								
+								setTimeout(function(){ location.reload(); }, 2500);
+							}else{
+								apps.toast.create({
+									icon: '<i class="material-icons">bug_report</i>',
+									text: 'Server error!',
+									position: 'center',
+									closeTimeout: 1000,
+								}).open();
+							}
+						}
+					});
+				}else{
+					if(lgg=='bm'){
+						str = 'Kod pengesahan tidak sah.';
+					}else if(lgg=='cn'){
+						str = '验证码无效。';
+					}else if(lgg=='tm'){
+						str = 'தவறான பயனர்பெயர்.';
+					}else{
+						str = 'Invalid verification code.';
+					}
+					
+					apps.toast.create({
+						icon: '<i class="material-icons">cancel</i>',
+						text: str,
+						position: 'center',
+						closeTimeout: 1000,
+					}).open();
+				}
+			}else{
+				if(lgg=='bm'){
+					str = 'Poskod tidak sah.';
+				}else if(lgg=='cn'){
+					str = '邮政编码无效。';
+				}else if(lgg=='tm'){
+					str = 'தவறான அஞ்சல் குறியீடு.';
+				}else{
+					str = 'Invalid postal code.';
+				}
+				
+				apps.toast.create({
+					icon: '<i class="material-icons">cancel</i>',
+					text: str,
+					position: 'center',
+					closeTimeout: 1000,
+				}).open();
+			}
+		}else{
+			if(lgg=='bm'){
+				str = 'Sila isikan nama pengguna anda.';
+			}else if(lgg=='cn'){
+				str = '请填写您的用户名。';
+			}else if(lgg=='tm'){
+				str = 'இந்த புலத்தை நிரப்பவும்.';
+			}else{
+				str = 'Please fill out the username.';
+			}
+			
+			apps.toast.create({
+				icon: '<i class="material-icons">cancel</i>',
+				text: str,
+				position: 'center',
+				closeTimeout: 1000,
+			}).open();
+		}
 	});
 	
 	// Game Page
@@ -233,52 +552,7 @@ $(document).ready(function(){
 	// Play and Win Page
 	
 	$('.btn-pnw').on('click', function(){
-		apps.dialog.create({
-			title : '',
-			text : 'Enter Coupon Code',
-			content: '<div class="dialog-input-field item-input"><div class="item-input-wrap"><input class="coupon-input" type="text" class="dialog-input"></div></div>',
-			closeByBackdropClick: true,
-			buttons: [
-				{
-					text: 'Get coupon number',
-				},{
-					text: 'OK',
-				}
-			],
-			onClick: function(e, num){
-				if(num == 1){
-					var coupon = $('#app .dialog .coupon-input').val();
-					
-					ajaxData = {
-						'usr' : DATA.profile.username,
-						'state' : DATA.profile.state,
-						'coupon' : coupon
-					};
-					postAjaxData = "ACT=" + encodeURIComponent('coupon_check')
-								 + "&DATA=" + encodeURIComponent(sys.serialize(ajaxData));
-							  
-					$.ajax({
-						type: 'POST',
-						url: 'http://wooho.fun/',
-						data: postAjaxData,
-						beforeSend: function(){
-							apps.dialog.preloader();
-						},
-						success: function(str){
-							if(str === '200 OK'){
-								$('#pnw').data('coupon', coupon);
-								PNW();
-							}else{
-								apps.dialog.close();
-								apps.dialog.alert('Invalid coupon code.', '');
-							}
-						}
-					});
-				}else if(num == 0){
-					window.open('https://grab.onelink.me/2695613898?af_dp=grab%3A%2F%2Fopen%3FscreenType%3DTRANSFER%26method%3DQRCode%26pairingInfo%3DGPTransfer1b8f3b73b4fb4ca28c93c16d0fa4cb66');
-				}
-			}
-		}).open();
+		
 	});
 	
 	$('#pnw .navbar .link.back').on('click', function(){
@@ -323,9 +597,6 @@ $(document).ready(function(){
 					$('#game .navbar').find('.title').text('2048');
 					$('#game .page .login-screen-content').css('background-color', '#F0F0D8');
 					apps.loginScreen.open($('#game'), true);
-					if(DATA.configuration.fullscreen){
-						document.documentElement.requestFullscreen();
-					}
 					$('#game .iframe iframe').remove();
 					$('#game .iframe').append('<iframe id="2048" src="games/2048/index.html" scrolling="no" width="550" height="650" allowfullscreen="true" onload="sys.onLoadHandler(\'tzfe\');"></iframe>');
 				}
@@ -364,9 +635,7 @@ $(document).ready(function(){
 					$('#game .navbar').find('.title').text('Flappy Bird');
 					$('#game .page .login-screen-content').css('background-color', '#DED895');
 					apps.loginScreen.open($('#game'), true);
-					if(DATA.configuration.fullscreen){
-						document.documentElement.requestFullscreen();
-					}
+					
 					gameTimer = 0;
 					$('#game .iframe iframe').remove();
 					$('#game .iframe').append('<iframe id="flappy" src="games/flappybird/index.html" scrolling="no" width="500" height="550" allowfullscreen="true" onload="sys.onLoadHandler(\'flappy\');"></iframe>');
@@ -406,9 +675,7 @@ $(document).ready(function(){
 					$('#game .navbar').find('.title').text('Mario');
 					$('#game .page .login-screen-content').css('background-color', '#000000');
 					apps.loginScreen.open($('#game'), true);
-					if(DATA.configuration.fullscreen){
-						document.documentElement.requestFullscreen();
-					}
+
 					gameTimer = 0;
 					$('#game .iframe iframe').remove();
 					$('#game .iframe').append('<iframe id="mario" src="games/mario/index.html" scrolling="no" width="500" height="580" allowfullscreen="true" onload="sys.onLoadHandler(\'mario\');"></iframe>');
@@ -448,9 +715,7 @@ $(document).ready(function(){
 					$('#game .navbar').find('.title').text('Pac Man');
 					$('#game .page .login-screen-content').css('background-color', '#000');
 					apps.loginScreen.open($('#game'), true);
-					if(DATA.configuration.fullscreen){
-						document.documentElement.requestFullscreen();
-					}
+
 					gameTimer = 0;
 					$('#game .iframe iframe').remove();
 					$('#game .iframe').append('<iframe id="pacman" src="games/pacman/index.html" scrolling="no" width="350" height="420" allowfullscreen="true" onload="sys.onLoadHandler(\'pacman\');"></iframe>');
@@ -490,9 +755,7 @@ $(document).ready(function(){
 					$('#game .navbar').find('.title').text('Puzzle Bobble');
 					$('#game .page .login-screen-content').css('background-color', '#444444');
 					apps.loginScreen.open($('#game'), true);
-					if(DATA.configuration.fullscreen){
-						document.documentElement.requestFullscreen();
-					}
+
 					gameTimer = 0;
 					$('#game .iframe iframe').remove();
 					$('#game .iframe').append('<iframe id="bobble" src="games/bobble/index.html" scrolling="no" width="500" height="800" allowfullscreen="true" onload="sys.onLoadHandler(\'bobble\');"></iframe>');
@@ -532,9 +795,7 @@ $(document).ready(function(){
 					$('#game .navbar').find('.title').text('Sudoku');
 					$('#game .page .login-screen-content').css('background-color', '#fff');
 					apps.loginScreen.open($('#game'), true);
-					if(DATA.configuration.fullscreen){
-						document.documentElement.requestFullscreen();
-					}
+
 					gameTimer = 0;
 					$('#game .iframe iframe').remove();
 					$('#game .iframe').append('<iframe id="sudoku" src="games/sudoku/index.html" scrolling="no" width="450" height="500" allowfullscreen="true" onload="sys.onLoadHandler(\'sudoku\');"></iframe>');
@@ -574,9 +835,7 @@ $(document).ready(function(){
 					$('#game .navbar').find('.title').text('T-Rex Runner');
 					$('#game .page .login-screen-content').css('background-color', '#fff');
 					apps.loginScreen.open($('#game'), true);
-					if(DATA.configuration.fullscreen){
-						document.documentElement.requestFullscreen();
-					}
+
 					gameTimer = 0;
 					$('#game .iframe iframe').remove();
 					$('#game .iframe').append('<iframe id="trexrunner" src="games/trexrunner/index.html" scrolling="no" width="500" height="350" allowfullscreen="true" onload="sys.onLoadHandler(\'trex\');"></iframe>');
@@ -616,9 +875,7 @@ $(document).ready(function(){
 					$('#game .navbar').find('.title').text('Tetris');
 					$('#game .page .login-screen-content').css('background-color', '#3B2313');
 					apps.loginScreen.open($('#game'), true);
-					if(DATA.configuration.fullscreen){
-						document.documentElement.requestFullscreen();
-					}
+
 					gameTimer = 0;
 					$('#game .iframe iframe').remove();
 					$('#game .iframe').append('<iframe id="tetris" src="games/tetris/index.html" scrolling="no" width="600" height="800" allowfullscreen="true" onload="sys.onLoadHandler(\'tetris\');"></iframe>');
@@ -658,9 +915,7 @@ $(document).ready(function(){
 					$('#game .navbar').find('.title').text('Two Dots');
 					$('#game .page .login-screen-content').css('background-color', '#FFFFFF');
 					apps.loginScreen.open($('#game'), true);
-					if(DATA.configuration.fullscreen){
-						document.documentElement.requestFullscreen();
-					}
+
 					gameTimer = 0;
 					$('#game .iframe iframe').remove();
 					$('#game .iframe').append('<iframe id="twodots" src="games/twodots/index.html" scrolling="no" width="500" height="500" allowfullscreen="true" onload="sys.onLoadHandler(\'twodots\');"></iframe>');
@@ -749,12 +1004,6 @@ $(document).ready(function(){
 	// Earn Credit
 	
 	$('button.btn-ecn').on('click', function(){
-		// window.open("http://www.wkventertainment.com");
-		
-		// advertisementInterval = window.setInterval(function(){
-			// advertisementTimer++;
-		// }, 1000);
-		
 		if(c(STORAGE.getItem('data'))){
 			var DATA = JSON.parse(STORAGE.getItem('data'));
 			
@@ -771,10 +1020,31 @@ $(document).ready(function(){
 			
 			$('#wooho-coin').find('.fab-text').text(Q);
 			
-			apps.dialog.alert('Yay, you earn 10 coin.', '');
+			apps.toast.create({
+				icon: '<i class="material-icons">monetization_on</i>',
+				text: 'Yay, you earn 10 coin!',
+				position: 'center',
+				closeTimeout: 2000,
+			}).open();
 		}else{
-			STORAGE.removeItem('data');
-			location.reload();
+			apps.toast.create({
+				icon: '<i class="material-icons">bug_report</i>',
+				text: 'Coin error detected!',
+				position: 'center',
+				closeTimeout: 1000,
+			}).open();
+			
+			var DATA = JSON.parse(STORAGE.getItem('data'));
+			
+			DATA.coin = {
+					'gY8aH' : true,
+					'Pd4' : false,
+					'TadCax' : 0,
+					'SgQwef' : 'e6d7362cde8aaaaba606825eeccdd506'
+				}
+			STORAGE.setItem('data', JSON.stringify(DATA));
+			
+			setTimeout(function(){ location.reload(); }, 1000);
 		}
 	});
 	
@@ -800,58 +1070,21 @@ $(document).ready(function(){
 	
 	$('.btn-stc-stt').on('click', function(){
 		var DATA = JSON.parse(STORAGE.getItem('data'));
-		var stateList = ['johor', 'kedah', 'kelantan', 'kualalumpur', 'labuan', 'melacca', 'negerisembilan', 'pahang', 'penang', 'perak', 'perlis', 'putrajaya', 'sabah', 'sarawak', 'selangor', 'terengganu'];
+		var stateList = ['malaysia', 'kualalumpur', 'putrajaya', 'labuan', 'perlis', 'kedah', 'terengganu', 'penang', 'kelantan', 'perak', 'pahang', 'selangor', 'negerisembilan', 'melacca', 'johor', 'sabah', 'sarawak'];
 		var num = stateList.indexOf(DATA.profile.state);
 		
 		if(num != -1){
-			if(num==15){
+			if(num==16){
 				num=0;
 			}else{
 				num++;
 			}
 			DATA.profile.state = stateList[num];
 		}else{
-			DATA.profile.state = 'kualalumpur';
+			DATA.profile.state = 'malaysia';
 		}
 		$('img.state').attr('src', ('img/state/' + DATA.profile.state + '.png'));
 		STORAGE.setItem('data', JSON.stringify(DATA));
-	});
-	
-	$('.btn-stc-fsc').on('click', function(){
-		var DATA = JSON.parse(STORAGE.getItem('data'));
-		
-		if(document.fullscreenEnabled){
-			if(DATA.configuration.fullscreen){
-				DATA.configuration.fullscreen = false;
-				STORAGE.setItem('data', JSON.stringify(DATA));
-				$('.btn-stc-fsc .item-after').data('state', 0);
-				$('.btn-stc-fsc .item-after').text($('.btn-stc-fsc .item-after').data((DATA.configuration.language+'-off')));
-			}else{
-				DATA.configuration.fullscreen = true;
-				STORAGE.setItem('data', JSON.stringify(DATA));
-				$('.btn-stc-fsc .item-after').data('state', 1);
-				$('.btn-stc-fsc .item-after').text($('.btn-stc-fsc .item-after').data((DATA.configuration.language+'-on')));
-			}
-		}else{
-			var DATA = JSON.parse(STORAGE.getItem('data')), x = '';
-			
-			if(DATA.configuration.language=='en'){
-				x = 'Your browser does not support fullscreen mode.';
-			}else if(DATA.configuration.language == 'bm'){
-				x = 'Pelayar internet anda tidak menyokong mod skrin penuh.';
-			}else if(DATA.configuration.language == 'cn'){
-				x = '您的互联网浏览器不支持全屏模式。';
-			}else if(DATA.configuration.language == 'tm'){
-				x = 'உங்கள் இணைய உலாவி முழுத்திரை பயன்முறையை ஆதரிக்காது.';
-			}
-			
-			apps.toast.create({
-				icon: '<i class="material-icons">aspect_ratio</i>',
-				text: x,
-				position: 'center',
-				closeTimeout: 3000,
-			}).open();
-		}
 	});
 	
 	$('.btn-stc-lgg').on('click', function(){
@@ -908,102 +1141,48 @@ $(document).ready(function(){
 	// Start Function
 	
 	if(sys.isEmpty(STORAGE.getItem('data'))){
-		var DATA = {
-				'profile': {
-					'username' : ('Guest' + sys.genNum(6)),
-					'contact' : '',
-					'state' : 'kualalumpur'
-				},
-				'configuration' : {
-					'fullscreen' : true,
-					'language' : 'en',
-					'sound' : true
-				},
-				'coin' : {
-					'gY8aH' : true,
-					'Pd4' : false,
-					'TadCax' : 0,
-					'SgQwef' : 'e6d7362cde8aaaaba606825eeccdd506'
-				}
-			};
-			
-		$('.btn-stc-fsc .item-after').data('state', 1);
-		$('.btn-stc-snd .item-after').data('state', 1);
+		apps.loginScreen.open($('#wcm'), true);
 		
-		if(!document.fullscreenEnabled){
-			DATA.configuration.fullscreen = false;
-			$('.btn-stc-fsc .item-after').data('state', 0);
+		var DATA = {
+			'profile' : {
+				'uid' : sys.genStr(32)
+			}
 		}
 		
 		STORAGE.setItem('data', JSON.stringify(DATA));
-		
-		$('.btn-stc-usn').find('.item-after').text(DATA.profile.username);
-		$('#wooho-coin').find('.fab-text').text(b(Object.keys(JSON.parse(STORAGE.getItem('data')).coin)[1]));
 	}else{
 		var DATA = JSON.parse(STORAGE.getItem('data'));
 		
-		$('#wooho-coin').find('.fab-text').text(b(Object.keys(JSON.parse(STORAGE.getItem('data')).coin)[1]));
-		
-		$('.btn-stc-usn').find('.item-after').text(DATA.profile.username);
-		$('.btn-stc-stt').find('.item-after').html(('<img class="state" src="img/state/'+DATA.profile.state+'.png" width="36" height="36"/>'));
-		
-		if(DATA.configuration.fullscreen){
-			$('.btn-stc-fsc .item-after').data('state', 1);
+		if(sys.isEmpty(DATA.profile.contact)){
+			apps.loginScreen.open($('#wcm'), true);
 		}else{
-			$('.btn-stc-fsc .item-after').data('state', 0);
-		}
-		
-		if(DATA.configuration.sound){
-			$('.btn-stc-snd .item-after').data('state', 1);
-		}else{
-			$('.btn-stc-snd .item-after').data('state', 0);
-		}
-		
-		$('.translate').each(function(){
-			$(this).text($(this).data(DATA.configuration.language));
-		});
-		
-		$('.translate_on_off').each(function(){
-			if($(this).data('state')==1){
-				$(this).text($(this).data((DATA.configuration.language+'-on')));
-			}else{
-				$(this).text($(this).data((DATA.configuration.language+'-off')));
-			}
-		});
-	}
-	
-	window.addEventListener('focus', function(){
-		if(advertisementTimer!=0){
-			window.clearInterval(advertisementInterval);
+			$('#wooho-coin').find('.fab-text').text(b(Object.keys(JSON.parse(STORAGE.getItem('data')).coin)[1]));
 			
-			if(advertisementTimer>10){
-				if(c(STORAGE.getItem('data'))){
-					var DATA = JSON.parse(STORAGE.getItem('data'));
-					
-					var curCoin = b(Object.keys(DATA.coin)[1]);
-					curCoin+=10;
-					var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
-					
-					DATA.coin = {};
-					DATA.coin[T] = F;
-					DATA.coin[S] = K;
-					DATA.coin[J] = Q;
-					DATA.coin[E] = G;
-					STORAGE.setItem('data', JSON.stringify(DATA));
-					
-					$('#wooho-coin').find('.fab-text').text(Q);
-					
-					apps.dialog.alert('Yay, you earn 10 coin.', '');
-				}else{
-					STORAGE.removeItem('data');
-					location.reload();
-				}
+			$('.btn-stc-usn').find('.item-after').text(DATA.profile.username);
+			$('.btn-stc-ctn').find('.item-after').text(('+6' + DATA.profile.contact));
+			$('.btn-stc-stt').find('.item-after').html(('<img class="state" src="img/state/'+DATA.profile.state+'.png" width="36" height="36"/>'));
+			
+			if(DATA.configuration.sound){
+				$('.btn-stc-snd .item-after').data('state', 1);
 			}else{
-				apps.dialog.alert('Watch ads for more than 10 seconds to earn coin.', '');
+				$('.btn-stc-snd .item-after').data('state', 0);
 			}
-			advertisementTimer = 0;
+			
+			$('.translate').each(function(){
+				$(this).text($(this).data(DATA.configuration.language));
+			});
+			
+			$('.translate_on_off').each(function(){
+				if($(this).data('state')==1){
+					$(this).text($(this).data((DATA.configuration.language+'-on')));
+				}else{
+					$(this).text($(this).data((DATA.configuration.language+'-off')));
+				}
+			});
+			
+			$('.view-main').css('opacity', '1');
 		}
-	});
+	}
 });
 
 sys = {
@@ -1107,13 +1286,9 @@ sys = {
 		return val;
 	},
 	'onBackKeyDown' : function(){
-		if((!$('#home-btn').hasClass('tab-link-active')) || $('html').hasClass('with-modal-popup')){
-			$('.popup-backdrop')[0].click();
-			$('#home-btn')[0].click();
-			
-			if($('.evt_ord_tab').length){
-				$('.evt_ord_tab').css('display', 'none');
-			}
+		if($('.login-screen.modal-in').length != 0){
+			window.clearInterval(gameInterval);
+			apps.loginScreen.close();
 			
 			return false;
 		}else{

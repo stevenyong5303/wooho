@@ -4,12 +4,12 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "com.wkv.game"
-        version   = "1.0.4">
+        version   = "1.0.5">
 
     <name>WOHOO</name>
 
     <description>
-        WOOHO is a play and win platform consist of live show and many mini games.
+        WOOHO is a play and win platform consist of many mini games. WOOHO is built to help people to earn money from playing games.
     </description>
 
     <author href="http://www.wooho.fun" email="wkv.malaysia@gmail.com">
@@ -46,22 +46,10 @@
 	<preference name="phonegap-version"       value="cli-9.0.0" />
 
     <!-- Plugins -->
-	<plugin name="cordova-plugin-x-socialsharing" />
-	<plugin name="phonegap-plugin-barcodescanner" />
-	<plugin name="onesignal-cordova-plugin" spec="2.4.1" source="npm" />
-	<plugin name="cordova-clipboard" />
+	<plugin name="cordova-plugin-admob-free" />
 	
-	<plugin name="cordova-plugin-battery-status" />
-    <plugin name="cordova-plugin-camera" />
-	<plugin name="cordova-plugin-console" />
-	<plugin name="cordova-plugin-contacts" />
 	<plugin name="cordova-plugin-device" />
-	<plugin name="cordova-plugin-dialogs" />
-	<plugin name="cordova-plugin-file" />
-	<plugin name="cordova-plugin-geolocation" />
 	<plugin name="cordova-plugin-inappbrowser" />
-	<plugin name="cordova-plugin-media" />
-	<plugin name="cordova-plugin-media-capture" />
 	<plugin name="cordova-plugin-network-information" />
 	<plugin name="cordova-plugin-statusbar" />
 	<plugin name="cordova-plugin-vibration" />
@@ -140,20 +128,9 @@
 	</platform>
 
     <gap:config-file platform="ios" parent="CFBundleShortVersionString">
-    <string>250</string>
+    <string>4</string>
     </gap:config-file>
-	
-	<platform name="ios">
-		<edit-config target="NSCameraUsageDescription" file="*-Info.plist" mode="merge" overwrite="true">
-			<string>Camera permission is required because the camera is needed to scan the 2D barcode to add, update, check the inventory.</string>
-		</edit-config>
-		<edit-config target="NSLocationAlwaysUsageDescription" file="*-Info.plist" mode="merge" overwrite="true">
-			<string>Location permission is required because there is a feature of this apps that allow the crew to clock in based on their current location.</string>
-		</edit-config>
-		<edit-config target="NSLocationWhenInUseUsageDescription" file="*-Info.plist" mode="merge" overwrite="true">
-			<string>Location permission is required because there is a feature of this apps that allow the crew to clock in based on their current location.</string>
-		</edit-config>
-	</platform>
+
     <!--
         Define access to external domains.
         <access />            - a blank access tag denies access to all external resources.

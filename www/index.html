@@ -47,6 +47,97 @@
 	</div>
 	<div id="app">
 		<div class="statusbar"></div>
+		<div id="wcm" class="login-screen" data-lgg="en">
+			<div class="view">
+				<div class="navbar">
+					<div class="navbar-bg"></div>
+					<div class="navbar-inner sliding">
+						<div class="left"> </div>
+						<div class="title">W O O H O</div>
+						<div class="right"> </div>
+					</div>
+				</div>
+				<div class="page">
+					<div class="card" style="margin-top:70px;">
+						<div class="card-header">
+							<p class="row">
+								<button class="col button button-fill button-raised wcm-btn-lgg translate" data-en="English" data-bm="Bahasa Malaysia" data-cn="中文" data-tm="தமிழ்">English</button>
+							</p>
+						</div>
+						<div class="card-content card-content-padding">
+							<div class="list no-hairlines-md">
+								<ul>
+									<li class="item-content item-input item-input-with-info">
+										<div class="item-media">
+											<i class="icon material-icons md-only">assignment_ind</i>
+										</div>
+										<div class="item-inner">
+											<div class="item-title item-label translate" data-en="Username" data-bm="Nama Pengguna" data-cn="用户名" data-tm="பயனர்பெயர்">Username</div>
+											<div class="item-input-wrap translate-placeholder translate-error">
+												<input class="wcm-usn" type="text" placeholder="Your username" data-en="Your username" data-bm="Nama Pengguna Anda" data-cn="您的用户名" data-tm="உங்கள் பயனர்பெயர்" data-een="Please fill out this field." data-ebm="Sila isikan nama pengguna anda" data-ecn="请填写您的用户名。" data-etm="இந்த புலத்தை நிரப்பவும்." required validate data-error-message="Please fill out this field.">
+												<div class="item-input-info"></div>
+											</div>
+										</div>
+									</li>
+									<li class="item-content item-input item-input-with-info">
+										<div class="item-media">
+											<i class="icon material-icons md-only">call</i>
+										</div>
+										<div class="item-inner">
+											<div class="item-title item-label translate" data-en="Contact Number" data-bm="Nombor Telefon" data-cn="联络号码" data-tm="தொடர்பு எண்">Contact Number</div>
+											<div class="item-input-wrap translate-error">
+												<input class="wcm-ctn" type="text" placeholder="01x xxxxxxx" data-een="Invalid contact number." data-ebm="Nombor telefon tidak sah." data-ecn="联系电话无效。" data-etm="தவறான தொடர்பு எண்." required validate pattern="01[0-9]{8,9}" data-error-message="Invalid contact number.">
+												<span class="input-key-button"></span>
+												<div class="item-input-info"></div>
+											</div>
+										</div>
+									</li>
+									<li class="item-content item-input item-input-with-info">
+										<div class="item-media">
+											<i class="icon material-icons md-only">location_on</i>
+										</div>
+										<div class="item-inner">
+											<div class="item-title item-label translate" data-en="Postal Code" data-bm="Poskod" data-cn="邮政编码" data-tm="அஞ்சல் குறியீடு">Postal Code</div>
+											<div class="item-input-wrap translate-error">
+												<input class="wcm-psk" type="text" placeholder="50000" data-een="Invalid postal code." data-ebm="Poskod tidak sah." data-ecn="邮政编码无效。" data-etm="தவறான அஞ்சல் குறியீடு." required validate pattern="[0-9]{5}" data-error-message="Invalid postal code.">
+												<span class="input-state"></span>
+												<div class="item-input-info"></div>
+											</div>
+										</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+						<div class="card-footer">
+							<div class="list no-hairlines-md" style="width:100%;">
+								<ul>
+									<li class="item-content item-input item-input-with-info">
+										<div class="item-media">
+											<i class="icon material-icons md-only">vpn_key</i>
+										</div>
+										<div class="item-inner">
+											<div class="item-title item-label translate" data-en="Verification Code" data-bm="Kod Pengesahan" data-cn="验证码" data-tm="பயனர்பெயர்">Verification Code</div>
+											<div class="item-input-wrap translate-placeholder translate-error">
+												<input class="wcm-vfc" type="number" data-een="Please fill out this field." data-ebm="Sila isikan kod pengesahan" data-ecn="请填写验证码。" data-etm="இந்த புலத்தை நிரப்பவும்." required validate data-error-message="Please fill out this field.">
+												<div class="item-input-info"></div>
+											</div>
+										</div>
+									</li>
+									<li>
+										<p class="row" style="padding-left:16px;padding-right:16px;">
+											<button class="col button button-fill button-raised wcm-btn-rvc translate" data-en="Request Verification Code" data-bm="Minta kod pengesahan" data-cn="要求验证码" data-tm="சரிபார்ப்புக் குறியீட்டைக் கோருங்கள்">Request Verification Code</button>
+										</p>
+										<p class="row" style="padding-left:16px;padding-right:16px;display:none;">
+											<button class="col button button-fill button-raised wcm-btn-lgn translate" data-en="Login" data-bm="Log Masuk" data-cn="登录" data-tm="உள்நுழைய">Login</button>
+										</p>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div id="game" class="login-screen">
 			<div class="view">
 				<div class="navbar">
@@ -69,29 +160,6 @@
 				</div>
 				<div class="page">
 					<div class="page-content login-screen-content iframe"></div>
-				</div>
-			</div>
-		</div>
-		<div id="live" class="login-screen">
-			<div class="view">
-				<div class="navbar">
-					<div class="navbar-bg"></div>
-					<div class="navbar-inner sliding">
-						<div class="left">
-							<a class="link back">
-								<i class="icon icon-back"></i>
-								<span class="if-not-md"></span>
-							</a>
-						</div>
-						<div class="title">W O O H O&nbsp;&nbsp;&nbsp;L I V E</div>
-						<div class="right"> </div>
-					</div>
-				</div>
-				<div class="page">
-					<div class="page-content login-screen-content">
-						<!-- LIVE VIDEO LINK HERE -->
-						<iframe src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fsansan.theresa97%2Fvideos%2F1580079652153962%2F&width=1920" width="889" height="500" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true"></iframe>
-					</div>
 				</div>
 			</div>
 		</div>
@@ -354,6 +422,17 @@
 									</a>
 								</li>
 								<li>
+									<a class="item-link item-content btn-stc-ctn">
+										<div class="item-media">
+											<i class="icon material-icons md-only">call</i>
+										</div>
+										<div class="item-inner">
+											<div class="item-title translate" data-en="Contact Number" data-bm="Nombor Telefon" data-cn="联络号码" data-tm="தொடர்பு எண்">Contact Number</div>
+											<div class="item-after">+60</div>
+										</div>
+									</a>
+								</li>
+								<li>
 									<a class="item-link item-content btn-stc-stt">
 										<div class="item-media">
 											<i class="icon material-icons md-only">location_on</i>
@@ -361,17 +440,6 @@
 										<div class="item-inner">
 											<div class="item-title translate" data-en="State / Province" data-bm="Negeri" data-cn="州属" data-tm="மாநில மாகாணம்">State / Province</div>
 											<div class="item-after"><img class="state" src="img/state/kualalumpur.png" width="36" height="36"/></div>
-										</div>
-									</a>
-								</li>
-								<li>
-									<a class="item-link item-content btn-stc-fsc">
-										<div class="item-media">
-											<i class="icon material-icons md-only">fullscreen</i>
-										</div>
-										<div class="item-inner">
-											<div class="item-title translate" data-en="Fullscreen" data-bm="Mod Skrin Penuh" data-cn="全屏" data-tm="முழு திரை">Fullscreen</div>
-											<div class="item-after translate_on_off" data-en-on="ON" data-bm-on="BUKA" data-cn-on="开" data-tm-on="திறந்த" data-en-off="OFF" data-bm-off="TUTUP" data-cn-off="关" data-tm-off="தநெருக்கமான">ON</div>
 										</div>
 									</a>
 								</li>
@@ -414,7 +482,7 @@
 			</div>
 		</div>
 		<div class="views">
-			<div class="view view-main">
+			<div class="view view-main" style="opacity:0;">
 				<div class="navbar">
 					<div class="navbar-bg"></div>
 					<div class="navbar-inner sliding">
@@ -431,9 +499,6 @@
 							</p>
 						</div>
 						<div class="card-content card-content-padding">
-							<p class="row">
-								<button class="col button button-fill button-raised btn-wlv translate" data-en="Watch Live" data-bm="Video Secara Langsung" data-cn="看直播" data-tm="நேரடி வீடியோ">Watch Live</button>
-							</p>
 							<p class="row">
 								<button class="col button button-fill button-raised btn-pnw translate" data-en="Play and Win" data-bm="Main dan Menang" data-cn="玩游戏赢奖" data-tm="விளையாடு மற்றும் வெற்றி">Play and Win</button>
 							</p>
@@ -453,8 +518,10 @@
 								<button class="col button button-fill button-raised btn-hlp translate" data-en="Help" data-bm="Maklumat" data-cn="帮助" data-tm="தகவல்">Help</button>
 							</p>
 						</div>
-						<div class="card-footer" style="height:330px;">
-							
+						<div class="card-footer">
+							<p class="row" style="width:100%;">
+								<button class="col button button-fill button-raised btn-rdm translate" data-en="Redeem Cash" data-bm="Menebus Tunai" data-cn="兑换现金" data-tm="பணத்தை மீட்டுக்கொள்ளுங்கள்">Redeem Cash</button>
+							</p>
 						</div>
 						<div id="wooho-coin" class="fab fab-extended fab-right-top color-gray" style="margin: 15px 15px 0 0;">
 							<a href="#">
@@ -474,112 +541,6 @@
 	<script src="js/app.js"></script>
 	<script type="text/javascript">
 		app.initialize();
-		
-		var PNWinterval, PNWtimer = 300;
-		
-		function PNW(){
-			PNWtimer = 300;
-			
-			var DATA = JSON.parse(STORAGE.getItem('data'));
-			
-			apps.dialog.close();
-			apps.loginScreen.open($('#pnw'), true);
-			if(DATA.configuration.fullscreen){
-				document.documentElement.requestFullscreen();
-			}
-			
-			$('#pnw .login-screen-content iframe').remove();
-			// CHANGE HERE [link][width][height]
-			$('#pnw .login-screen-content').append('<iframe id="pnw_game" src="games/bobble/index.html" scrolling="no" width="500" height="800" allowfullscreen="true" onload="PNWonLoad()"></iframe>');
-			// CHANGE HERE [color]
-			$('#pnw .login-screen-content').css('background-color', '#444444');
-			
-			PNWinterval = window.setInterval(function(){
-				PNWtimer--;
-				
-				if(PNWtimer==0){
-					// CHANGE HERE [score]
-					var gameScore = parseInt($('#score span', $('#pnw .login-screen-content iframe').contents()).text());
-						
-					gameScore = (isNaN(gameScore) ? 0 : gameScore);
-					
-					var DATA = JSON.parse(STORAGE.getItem('data'));
-					
-					//CHANGE HERE [game name]
-					ajaxData = {
-						'usr' : DATA.profile.username,
-						'state' : DATA.profile.state,
-						'game' : 'bobble',
-						'score' : gameScore,
-						'coupon' : $('#pnw').data('coupon')
-					};
-					postAjaxData = "ACT=" + encodeURIComponent('pnw_score')
-								 + "&DATA=" + encodeURIComponent(sys.serialize(ajaxData));
-							  
-					$.ajax({
-						type: 'POST',
-						url: 'http://wooho.fun/',
-						data: postAjaxData,
-						success: function(str){
-							apps.loginScreen.close($('#pnw'), true);
-							apps.dialog.alert(('Congratulations, your score is ' + gameScore), '');
-							$('#pnw').removeData('coupon');
-						}
-					});
-				}else{
-					var m = Math.floor(PNWtimer/60), s = PNWtimer%60;
-					var sPad = ((s < 10) ? ('0' + s) : ('' + s));
-					
-					$('#pnw').find('.view .title').text((m + ':' + sPad));
-					
-					if(PNWtimer % 5 == 0){
-						// CHANGE HERE [score]
-						var gameScore = parseInt($('#score span', $('#pnw .login-screen-content iframe').contents()).text());
-						
-						gameScore = (isNaN(gameScore) ? 0 : gameScore);
-						
-						var DATA = JSON.parse(STORAGE.getItem('data'));
-						
-						//CHANGE HERE [game name]
-						ajaxData = {
-							'usr' : DATA.profile.username,
-							'state' : DATA.profile.state,
-							'game' : 'bobble',
-							'score' : gameScore,
-							'coupon' : $('#pnw').data('coupon')
-						};
-						postAjaxData = "ACT=" + encodeURIComponent('pnw_score')
-									 + "&DATA=" + encodeURIComponent(sys.serialize(ajaxData));
-								  
-						$.ajax({
-							type: 'POST',
-							url: 'http://wooho.fun/',
-							data: postAjaxData,
-							success: function(str){
-								console.log(str);
-							}
-						});
-					}
-				}
-			}, 1000);
-		}
-		
-		function PNWonLoad(){
-			var w = window.innerWidth,
-				h = window.innerHeight;
-			var sizeW = (w/500),
-				sizeH = (h/(800+56));
-				
-			if(sizeW < sizeH){
-				$('#pnw iframe').css('transform', 'scale(' + sizeW + ')');
-				$('#pnw iframe').css('top', ((((sizeW*800)-800)/2)+56+'px'));
-				$('#pnw iframe').css('left', ((((sizeW*500)-500)/2)+'px'));
-			}else{
-				$('#pnw iframe').css('transform', 'scale(' + sizeH + ')');
-				$('#pnw iframe').css('top', ((((sizeH*800)-800)/2)+56+'px'));
-				$('#pnw iframe').css('left', ((((sizeH*500)-500)/2)+'px'));
-			}
-		}
 	</script>
 </body>
 </html>
