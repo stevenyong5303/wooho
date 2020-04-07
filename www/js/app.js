@@ -1,13 +1,13 @@
 var $$ = Dom7;
 var sys = new Object();
 var STORAGE = window.localStorage;
-var requestInterval, requestTimer = 0, gameInterval, gameTimer = 0, adInterval, adTimer = 0;
+var requestInterval, requestTimer = 0, gameInterval, gameTimer = 0, adInterval, adTimer = 0, interstitialReady = false;
 var apps = new Framework7({
 			root: '#app',
 			id: 'com.wkv.game',
 			name: 'WOOHO',
 			theme: 'md',
-			version: "1.0.29",
+			version: "1.0.30",
 			rtl: false,
 			language: "en-US"
 		});
@@ -74,18 +74,16 @@ var app = {
 		admob.interstitial.prepare();
 		
 		var rewardConfig = {
-			id: 'ca-app-pub-7511151038516922/6238150573',
+			id: admobid.rewardvideo,
 			isTesting: true,
 			autoShow: true
 		};
 
 		admob.rewardvideo.prepare(rewardConfig)
 		.then((ok) => {
-		// alert('prepare success');
-		// alert(ok);
+			console.log('Admob rewardvideo success.');
 		}).catch(function (error) {
-		// alert('prepare fail');
-		// alert(error);
+			console.log('Admob rewardvideo fail.');
 		});
 		
 		window.open = cordova.InAppBrowser.open;
@@ -103,7 +101,7 @@ var app = {
 		});
 		
 		document.addEventListener('admob.interstitial.events.LOAD', function(event){
-			// admob.interstitial.show();
+			interstitialReady = true;
 		});
 		
 		document.addEventListener('admob.interstitial.events.OPEN', function(event){
@@ -111,7 +109,9 @@ var app = {
 		});
 		
 		document.addEventListener('admob.interstitial.events.CLOSE', function(event){
+			sys.replayGame();
 			admob.interstitial.prepare();
+			interstitialReady = false;
 		});
 		
 		document.addEventListener('admob.rewardvideo.events.LOAD_FAIL', function(event){
@@ -680,7 +680,12 @@ $(document).ready(function(){
 				},
 				success: function(str){
 					apps.dialog.close();
-					$('#game .iframe iframe')[0].contentDocument.location.href = $('#game .iframe iframe')[0].contentDocument.location.href;
+					
+					if(interstitialReady){
+						admob.interstitial.show();
+					}else{
+						sys.replayGame();
+					}
 				}
 			});
 		});
@@ -1634,6 +1639,9 @@ sys = {
 			admob.banner.hide();
 		}
 		apps.dialog.close();
+	},
+	'replayGame' : function(){
+		$('#game .iframe iframe')[0].contentDocument.location.href = $('#game .iframe iframe')[0].contentDocument.location.href;
 	},
 	'genStr' : function(num){
 		var result = '';
