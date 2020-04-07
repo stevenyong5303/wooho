@@ -7,7 +7,7 @@ var apps = new Framework7({
 			id: 'com.wkv.game',
 			name: 'WOOHO',
 			theme: 'md',
-			version: "1.0.28",
+			version: "1.0.29",
 			rtl: false,
 			language: "en-US"
 		});
@@ -73,12 +73,20 @@ var app = {
 		})
 		admob.interstitial.prepare();
 		
-		admob.rewardvideo.config({
-			id: admobid.rewardvideo,
+		var rewardConfig = {
+			id: 'ca-app-pub-7511151038516922/6238150573',
 			isTesting: true,
-			autoShow: false
-		})
-		admob.rewardvideo.prepare();
+			autoShow: true
+		};
+
+		admob.rewardvideo.prepare(rewardConfig)
+		.then((ok) => {
+		// alert('prepare success');
+		// alert(ok);
+		}).catch(function (error) {
+		// alert('prepare fail');
+		// alert(error);
+		});
 		
 		window.open = cordova.InAppBrowser.open;
 		document.addEventListener("backbutton", sys.onBackKeyDown, false);
@@ -106,7 +114,7 @@ var app = {
 			admob.interstitial.prepare();
 		});
 		
-		document.addEventListener('admob.rewardvideo.events.LOAD_FAIL', function(event) {
+		document.addEventListener('admob.rewardvideo.events.LOAD_FAIL', function(event){
 			$('.btn-ecn').text('Load Fail');
 			apps.dialog.alert(JSON.stringify(event));
 		});
