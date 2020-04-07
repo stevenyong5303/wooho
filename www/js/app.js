@@ -7,7 +7,7 @@ var apps = new Framework7({
 			id: 'com.wkv.game',
 			name: 'WOOHO',
 			theme: 'md',
-			version: "1.0.26",
+			version: "1.0.27",
 			rtl: false,
 			language: "en-US"
 		});
@@ -108,6 +108,7 @@ var app = {
 		
 		document.addEventListener('admob.rewardvideo.events.LOAD_FAIL', function(event) {
 			$('.btn-ecn').text('Load Fail');
+			$('.btn-ecn').data('error', (JSON.stringify(event)));
 		});
 		
 		document.addEventListener('admob.rewardvideo.events.LOAD', function(event){
@@ -1289,6 +1290,10 @@ $(document).ready(function(){
 			});
 			
 			$('.view-main').css('opacity', '1');
+			
+			if($('.btn-ecn').data('error')){
+				alert($('.btn-ecn').data('error'));
+			}
 		}
 	}
 });
