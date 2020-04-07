@@ -7,7 +7,7 @@ var apps = new Framework7({
 			id: 'com.wkv.game',
 			name: 'WOOHO',
 			theme: 'md',
-			version: "1.0.25",
+			version: "1.0.26",
 			rtl: false,
 			language: "en-US"
 		});
@@ -78,7 +78,7 @@ var app = {
 			isTesting: true,
 			autoShow: false
 		})
-		admob.rewardvideo.prepare()
+		admob.rewardvideo.prepare();
 		
 		window.open = cordova.InAppBrowser.open;
 		document.addEventListener("backbutton", sys.onBackKeyDown, false);
@@ -106,6 +106,10 @@ var app = {
 			admob.interstitial.prepare();
 		});
 		
+		document.addEventListener('admob.rewardvideo.events.LOAD_FAIL', function(event) {
+			$('.btn-ecn').text('Load Fail');
+		});
+		
 		document.addEventListener('admob.rewardvideo.events.LOAD', function(event){
 			$('.btn-ecn').removeClass('disabled');
 			$('.btn-ecn').prop('disabled', false);
@@ -114,6 +118,8 @@ var app = {
 		document.addEventListener('admob.rewardvideo.events.CLOSE', function(event){
 			$('.btn-ecn').addClass('disabled');
 			$('.btn-ecn').prop('disabled', true);
+			
+			admob.rewardvideo.prepare();
 		});
 		
 		document.addEventListener('admob.rewardvideo.events.REWARD', function(event){
@@ -141,6 +147,8 @@ var app = {
 			
 			$('.btn-ecn').addClass('disabled');
 			$('.btn-ecn').prop('disabled', true);
+			
+			admob.rewardvideo.prepare();
 		});
     },
 	
