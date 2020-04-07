@@ -7,7 +7,7 @@ var apps = new Framework7({
 			id: 'com.wkv.game',
 			name: 'WOOHO',
 			theme: 'md',
-			version: "1.0.23",
+			version: "1.0.24",
 			rtl: false,
 			language: "en-US"
 		});
@@ -1141,7 +1141,7 @@ $(document).ready(function(){
 	
 	$('button.btn-ecn').on('click', function(){
 		if(c(STORAGE.getItem('data'))){
-			admob.rewardvideo.show();
+			admob.interstitial.show();
 		}else{
 			apps.toast.create({
 				icon: '<i class="material-icons">bug_report</i>',
