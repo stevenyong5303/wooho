@@ -139,7 +139,9 @@ window.setInterval(function(){
 					$this.find(".sdk-col").removeClass("sdk-selected");
 					if ($(this).children().length == 0) {
 						//select this 
-						$('#sound').find('audio.sound_touch')[0].play();
+						if($('#sound').length){
+							$('#sound').find('audio.sound_touch')[0].play();
+						}
 						defaults.domMatrix[$(this).attr("data-row")][$(this).attr("data-col")].addClass("sdk-selected");
 						defaults.selected = defaults.domMatrix[$(this).attr("data-row")][$(this).attr("data-col")];
 						defaults.selectedSolution = defaults.matrix[$(this).attr("data-row")][$(this).attr("data-col")]
@@ -187,7 +189,9 @@ window.setInterval(function(){
 							//add the answer to screen
 							defaults.selected.append("<div class='sdk-solution'>"+ defaults.selectedSolution +"</div>");
 							
-							$('#sound').find('audio.sound_true')[0].play();
+							if($('#sound').length){
+								$('#sound').find('audio.sound_true')[0].play();
+							}
 							
 							var score = (102-(gameTimer*2));
 							var currentScore = parseInt($('#score span').text());
@@ -213,7 +217,9 @@ window.setInterval(function(){
 							
 							$('#score span').text((pad + newScore));
 							
-							$('#sound').find('audio.sound_false')[0].play();
+							if($('#sound').length){
+								$('#sound').find('audio.sound_false')[0].play();
+							}
 						}
 						
 					}

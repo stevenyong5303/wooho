@@ -145,7 +145,9 @@ onKeyDown(function () {
 		},
 		// callback function that runs after the bubble makes contact and stops
 		function () {
-			$('#sound').find('audio.sound_touch')[0].play();
+			if($('#sound').length){
+				$('#sound').find('audio.sound_touch')[0].play();
+			}
 
 			// line up playerBubble on the y axis
 			playerBubble.y = closestCoordinate(ys, playerBubble.y);
@@ -188,7 +190,9 @@ onKeyDown(function () {
 					
 					$('#score span').text((pad + newScore));
 				});
-				$('#sound').find('audio.sound_explode')[0].play();
+				if($('#sound').length){
+					$('#sound').find('audio.sound_explode')[0].play();
+				}
 			}
 			// if not, then unmark the matches
 			else matches.forEach(function (bubble) {
@@ -273,7 +277,9 @@ forever(function () {
 			frozen = true;
 			
 			$('#ctrl_shoot').data('gameover', 1);
-			$('#sound').find('audio.sound_gameover')[0].play();
+			if($('#sound').length){
+				$('#sound').find('audio.sound_gameover')[0].play();
+			}
 		}
 	});
 	// you win if you get rid of all the bubbles on the screen

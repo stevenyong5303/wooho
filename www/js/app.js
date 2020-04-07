@@ -7,7 +7,7 @@ var apps = new Framework7({
 			  id: 'com.wkv.game',
 			  name: 'WOOHO',
 			  theme: 'md',
-			  version: "1.0.7",
+			  version: "1.0.8",
 			  rtl: false,
 			  language: "en-US"
 		  });
@@ -34,7 +34,31 @@ var app = {
 };
 
 $(document).ready(function(){
-	var ajaxData = '', postAjaxData = '';
+	var ajaxData = '', postAjaxData = '', 
+		msgPracticeConfirm = {
+			'en' : 'Deduct 1 Star per minute?',
+			'bm' : 'Gunakan 1 Star seminit?',
+			'cn' : '每分钟扣除 1 颗 Star ？',
+			'tm' : 'நிமிடத்திற்கு 1 Star ஐக் கழிக்கவா?'
+		},
+		msgNotEnough = {
+			'en' : 'Not enough Star. :(',
+			'bm' : 'Tidak cukup Star. :(',
+			'cn' : 'Star 不够。 :(',
+			'tm' : 'போதுமான Star இல்லை. :('
+		},
+		msgRestart = {
+			'en' : 'Restart game?',
+			'bm' : 'Mulakan semula？',
+			'cn' : '重新启动游戏？',
+			'tm' : 'விளையாட்டை மறுதொடக்கம் செய்யவா?'
+		},
+		msgEarn = {
+			'en' : 'Yay, you earn 10 Star!',
+			'bm' : 'Tahniah, anda mendapat 10 Star!',
+			'cn' : '哇，您获得10 Star！',
+			'tm' : 'வாழ்த்துக்கள், நீங்கள் 10 Star சம்பாதிக்கிறீர்கள்!'
+		};
 	
 	// Welcome Page
 	
@@ -487,7 +511,7 @@ $(document).ready(function(){
 	});
 	
 	$('#game .navbar .link.replay').on('click', function(){
-		apps.dialog.confirm(('Restart game?'), '', function(){
+		apps.dialog.confirm(msgRestart[JSON.parse(STORAGE.getItem('data')).configuration.language], '', function(){
 			var gameName = $('#game .iframe iframe').attr('id'),
 				gameScore = 0;
 				
@@ -570,14 +594,14 @@ $(document).ready(function(){
 	});
 	
 	$('.btn-ptc-tzf').on('click', function(){
-		apps.dialog.confirm('deduct 1 coin / minute?', '', function () {
+		apps.dialog.confirm((msgPracticeConfirm[JSON.parse(STORAGE.getItem('data')).configuration.language]), '', function () {
 			if(c(STORAGE.getItem('data'))){
 				var DATA = JSON.parse(STORAGE.getItem('data'));
 				var curCoin = b(Object.keys(DATA.coin)[1]);
 				
 				if(curCoin<1){
 					apps.dialog.close();
-					apps.dialog.alert('Not enough coin. :(', '');
+					apps.dialog.alert((msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]), '');
 					apps.loginScreen.close($('#ptc'), true);
 				}else{
 					apps.dialog.preloader();
@@ -608,14 +632,14 @@ $(document).ready(function(){
 	});
 	
 	$('.btn-ptc-fpb').on('click', function(){
-		apps.dialog.confirm('deduct 1 coin / minute?', '', function () {
+		apps.dialog.confirm((msgPracticeConfirm[JSON.parse(STORAGE.getItem('data')).configuration.language]), '', function () {
 			if(c(STORAGE.getItem('data'))){
 				var DATA = JSON.parse(STORAGE.getItem('data'));
 				var curCoin = b(Object.keys(DATA.coin)[1]);
 				
 				if(curCoin<1){
 					apps.dialog.close();
-					apps.dialog.alert('Not enough coin. :(', '');
+					apps.dialog.alert((msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]), '');
 					apps.loginScreen.close($('#ptc'), true);
 				}else{
 					apps.dialog.preloader();
@@ -648,14 +672,14 @@ $(document).ready(function(){
 	});
 	
 	$('.btn-ptc-mro').on('click', function(){
-		apps.dialog.confirm('deduct 1 coin / minute?', '', function () {
+		apps.dialog.confirm((msgPracticeConfirm[JSON.parse(STORAGE.getItem('data')).configuration.language]), '', function () {
 			if(c(STORAGE.getItem('data'))){
 				var DATA = JSON.parse(STORAGE.getItem('data'));
 				var curCoin = b(Object.keys(DATA.coin)[1]);
 				
 				if(curCoin<1){
 					apps.dialog.close();
-					apps.dialog.alert('Not enough coin. :(', '');
+					apps.dialog.alert((msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]), '');
 					apps.loginScreen.close($('#ptc'), true);
 				}else{
 					apps.dialog.preloader();
@@ -688,14 +712,14 @@ $(document).ready(function(){
 	});
 	
 	$('.btn-ptc-pcm').on('click', function(){
-		apps.dialog.confirm('deduct 1 coin / minute?', '', function () {
+		apps.dialog.confirm((msgPracticeConfirm[JSON.parse(STORAGE.getItem('data')).configuration.language]), '', function () {
 			if(c(STORAGE.getItem('data'))){
 				var DATA = JSON.parse(STORAGE.getItem('data'));
 				var curCoin = b(Object.keys(DATA.coin)[1]);
 				
 				if(curCoin<1){
 					apps.dialog.close();
-					apps.dialog.alert('Not enough coin. :(', '');
+					apps.dialog.alert((msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]), '');
 					apps.loginScreen.close($('#ptc'), true);
 				}else{
 					apps.dialog.preloader();
@@ -728,14 +752,14 @@ $(document).ready(function(){
 	});
 	
 	$('.btn-ptc-pbb').on('click', function(){
-		apps.dialog.confirm('deduct 1 coin / minute?', '', function () {
+		apps.dialog.confirm((msgPracticeConfirm[JSON.parse(STORAGE.getItem('data')).configuration.language]), '', function () {
 			if(c(STORAGE.getItem('data'))){
 				var DATA = JSON.parse(STORAGE.getItem('data'));
 				var curCoin = b(Object.keys(DATA.coin)[1]);
 				
 				if(curCoin<1){
 					apps.dialog.close();
-					apps.dialog.alert('Not enough coin. :(', '');
+					apps.dialog.alert((msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]), '');
 					apps.loginScreen.close($('#ptc'), true);
 				}else{
 					apps.dialog.preloader();
@@ -768,14 +792,14 @@ $(document).ready(function(){
 	});
 	
 	$('.btn-ptc-sdk').on('click', function(){
-		apps.dialog.confirm('deduct 1 coin / minute?', '', function () {
+		apps.dialog.confirm((msgPracticeConfirm[JSON.parse(STORAGE.getItem('data')).configuration.language]), '', function () {
 			if(c(STORAGE.getItem('data'))){
 				var DATA = JSON.parse(STORAGE.getItem('data'));
 				var curCoin = b(Object.keys(DATA.coin)[1]);
 				
 				if(curCoin<1){
 					apps.dialog.close();
-					apps.dialog.alert('Not enough coin. :(', '');
+					apps.dialog.alert((msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]), '');
 					apps.loginScreen.close($('#ptc'), true);
 				}else{
 					apps.dialog.preloader();
@@ -808,14 +832,14 @@ $(document).ready(function(){
 	});
 	
 	$('.btn-ptc-trr').on('click', function(){
-		apps.dialog.confirm('deduct 1 coin / minute?', '', function () {
+		apps.dialog.confirm((msgPracticeConfirm[JSON.parse(STORAGE.getItem('data')).configuration.language]), '', function () {
 			if(c(STORAGE.getItem('data'))){
 				var DATA = JSON.parse(STORAGE.getItem('data'));
 				var curCoin = b(Object.keys(DATA.coin)[1]);
 				
 				if(curCoin<1){
 					apps.dialog.close();
-					apps.dialog.alert('Not enough coin. :(', '');
+					apps.dialog.alert((msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]), '');
 					apps.loginScreen.close($('#ptc'), true);
 				}else{
 					apps.dialog.preloader();
@@ -848,14 +872,14 @@ $(document).ready(function(){
 	});
 	
 	$('.btn-ptc-tts').on('click', function(){
-		apps.dialog.confirm('deduct 1 coin / minute?', '', function () {
+		apps.dialog.confirm((msgPracticeConfirm[JSON.parse(STORAGE.getItem('data')).configuration.language]), '', function () {
 			if(c(STORAGE.getItem('data'))){
 				var DATA = JSON.parse(STORAGE.getItem('data'));
 				var curCoin = b(Object.keys(DATA.coin)[1]);
 				
 				if(curCoin<1){
 					apps.dialog.close();
-					apps.dialog.alert('Not enough coin. :(', '');
+					apps.dialog.alert((msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]), '');
 					apps.loginScreen.close($('#ptc'), true);
 				}else{
 					apps.dialog.preloader();
@@ -888,14 +912,14 @@ $(document).ready(function(){
 	});
 	
 	$('.btn-ptc-tdt').on('click', function(){
-		apps.dialog.confirm('deduct 1 coin / minute?', '', function () {
+		apps.dialog.confirm((msgPracticeConfirm[JSON.parse(STORAGE.getItem('data')).configuration.language]), '', function () {
 			if(c(STORAGE.getItem('data'))){
 				var DATA = JSON.parse(STORAGE.getItem('data'));
 				var curCoin = b(Object.keys(DATA.coin)[1]);
 				
 				if(curCoin<1){
 					apps.dialog.close();
-					apps.dialog.alert('Not enough coin. :(', '');
+					apps.dialog.alert((msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]), '');
 					apps.loginScreen.close($('#ptc'), true);
 				}else{
 					apps.dialog.preloader();
@@ -1021,8 +1045,8 @@ $(document).ready(function(){
 			$('#wooho-coin').find('.fab-text').text(Q);
 			
 			apps.toast.create({
-				icon: '<i class="material-icons">monetization_on</i>',
-				text: 'Yay, you earn 10 coin!',
+				icon: '<i class="material-icons">stars</i>',
+				text: msgEarn[JSON.parse(STORAGE.getItem('data')).configuration.language],
 				position: 'center',
 				closeTimeout: 2000,
 			}).open();
@@ -1323,6 +1347,10 @@ sys = {
 					$('#game iframe').css('top', ((((sizeH*650)-650)/2)+56+'px'));
 					$('#game iframe').css('left', ((((sizeH*550)-550)/2)+'px'));
 				}
+				
+				if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+					$('#sound', $('#game .iframe iframe').contents()).remove();
+				}
 				break;
 				
 			case 'flappy':
@@ -1339,6 +1367,10 @@ sys = {
 					$('#game iframe').css('transform', 'scale(' + sizeH + ')');
 					$('#game iframe').css('top', ((((sizeH*550)-550)/2)+56+'px'));
 					$('#game iframe').css('left', ((((sizeH*500)-500)/2)+'px'));
+				}
+				
+				if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+					$('#game iframe')[0].contentWindow.buzz.all().setVolume(0);
 				}
 				break;
 				
@@ -1374,6 +1406,10 @@ sys = {
 					$('#game iframe').css('top', ((((sizeH*420)-420)/2)+56+'px'));
 					$('#game iframe').css('left', ((((sizeH*350)-350)/2)+'px'));
 				}
+				
+				if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+					$('#game iframe')[0].contentWindow.GROUP_SOUND.mute();
+				}
 				break;
 				
 			case 'bobble':
@@ -1392,6 +1428,10 @@ sys = {
 					$('#game iframe').css('top', ((((sizeH*800)-800)/2)+56+'px'));
 					$('#game iframe').css('left', ((((sizeH*500)-500)/2)+'px'));
 				}
+				
+				if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+					$('#sound', $('#game .iframe iframe').contents()).remove();
+				}
 				break;
 				
 			case 'sudoku':
@@ -1408,6 +1448,10 @@ sys = {
 					$('#game iframe').css('transform', 'scale(' + sizeH + ')');
 					$('#game iframe').css('top', ((((sizeH*500)-500)/2)+56+'px'));
 					$('#game iframe').css('left', ((((sizeH*450)-450)/2)+'px'));
+				}
+				
+				if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+					$('#sound', $('#game .iframe iframe').contents()).remove();
 				}
 				break;
 				
@@ -1426,6 +1470,9 @@ sys = {
 					$('#game iframe').css('top', ((((sizeH*350)-350)/2)+56+'px'));
 					$('#game iframe').css('left', ((((sizeH*500)-500)/2)+'px'));
 				}
+				if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+					$('#audio-resources', $('#game .iframe iframe').contents()).remove();
+				}
 				break;
 				
 			case 'tetris':
@@ -1442,6 +1489,9 @@ sys = {
 					$('#game iframe').css('transform', 'scale(' + sizeH + ')');
 					$('#game iframe').css('top', ((((sizeH*800)-800)/2)+56+'px'));
 					$('#game iframe').css('left', ((((sizeH*600)-600)/2)+'px'));
+				}
+				if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+					$('#woohoSound', $('#game .iframe iframe').contents()).remove();
 				}
 				break;
 				
@@ -1460,6 +1510,9 @@ sys = {
 					$('#game iframe').css('top', ((((sizeH*500)-500)/2)+56+'px'));
 					$('#game iframe').css('left', ((((sizeH*500)-500)/2)+'px'));
 				}
+				if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+					$('#sound', $('#game .iframe iframe').contents()).remove();
+				}
 				break;
 		}
 		
@@ -1473,7 +1526,7 @@ sys = {
 						var curCoin = b(Object.keys(DATA.coin)[1]);
 						
 						if(curCoin<1){
-							apps.dialog.alert('Not enough coin. :(', '');
+							apps.dialog.alert((msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]), '');
 						}else{
 							curCoin--;
 							var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;

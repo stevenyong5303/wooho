@@ -4,7 +4,7 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "com.wkv.game"
-        version   = "1.0.7">
+        version   = "1.0.8">
 
     <name>WOHOO</name>
 
@@ -128,7 +128,7 @@
 	</platform>
 
     <gap:config-file platform="ios" parent="CFBundleShortVersionString">
-    <string>7</string>
+    <string>8</string>
     </gap:config-file>
 
     <!--

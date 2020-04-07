@@ -200,10 +200,14 @@ Board.prototype.resetBoard = function() {
 Board.prototype.destroyDots = function() {
   if (this.squareCompleted) {
     this.deleteAllDotsofColor();
-	$('#sound').find('audio.sound_square')[0].play();
+	if($('#sound').length){
+		$('#sound').find('audio.sound_square')[0].play();
+	}
   } else {
     this.deleteSelectedDots();
-	$('#sound').find('audio.sound_explode')[0].play();
+	if($('#sound').length){
+		$('#sound').find('audio.sound_explode')[0].play();
+	}
   }
   this.resetAfterDestroying();
 }

@@ -261,7 +261,7 @@ h3 {
 #panel .sound { 
 	top: 348px;
 	right: 50px;
-	z-idex: -100;
+	z-index: -100;
 	opacity: 0;
 }
 

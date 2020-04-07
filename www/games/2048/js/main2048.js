@@ -197,7 +197,9 @@ document.addEventListener('touchend',function(event){
             if(moveRight()){
                     setTimeout("generateOneNumber()",210);
                     setTimeout("isGameover()",300);
-					$('#sound').find('audio.sound_move')[0].play();
+					if($('#sound').length){
+						$('#sound').find('audio.sound_move')[0].play();
+					}
                     // setTimeout("isWin()",300);
                 }
         }else{
@@ -205,7 +207,9 @@ document.addEventListener('touchend',function(event){
             if(moveLeft()){
                     setTimeout("generateOneNumber()",210);
                     setTimeout("isGameover()",300);
-					$('#sound').find('audio.sound_move')[0].play();
+					if($('#sound').length){
+						$('#sound').find('audio.sound_move')[0].play();
+					}
                     // setTimeout("isWin()",300);
                 }
         }
@@ -215,7 +219,9 @@ document.addEventListener('touchend',function(event){
             if(moveDown()){
                     setTimeout("generateOneNumber()",210);
                     setTimeout("isGameover()",300);
-					$('#sound').find('audio.sound_move')[0].play();
+					if($('#sound').length){
+						$('#sound').find('audio.sound_move')[0].play();
+					}
                     // setTimeout("isWin()",300);
                 }
         }else{
@@ -223,7 +229,9 @@ document.addEventListener('touchend',function(event){
             if(moveUp()){
                     setTimeout("generateOneNumber()",210);
                     setTimeout("isGameover()",300);
-					$('#sound').find('audio.sound_move')[0].play();
+					if($('#sound').length){
+						$('#sound').find('audio.sound_move')[0].play();
+					}
                     // setTimeout("isWin()",300);
                 }
         }
@@ -233,7 +241,9 @@ document.addEventListener('touchend',function(event){
 function isGameover(){
     if(nospace(board)&&nomove(board)){
         gameover();
-		$('#sound').find('audio.sound_gameover')[0].play();
+		if($('#sound').length){
+			$('#sound').find('audio.sound_gameover')[0].play();
+		}
     }
 }
 
