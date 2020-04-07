@@ -2,20 +2,44 @@ var $$ = Dom7;
 var sys = new Object();
 var STORAGE = window.localStorage;
 var requestInterval, requestTimer = 0, gameInterval, gameTimer = 0;
+var msgPracticeConfirm = {
+		'en' : 'Deduct 1 Star per minute?',
+		'bm' : 'Gunakan 1 Star seminit?',
+		'cn' : '每分钟扣除 1 颗 Star ？',
+		'tm' : 'நிமிடத்திற்கு 1 Star ஐக் கழிக்கவா?'
+	},
+	msgNotEnough = {
+		'en' : 'Not enough Star. :(',
+		'bm' : 'Tidak cukup Star. :(',
+		'cn' : 'Star 不够。 :(',
+		'tm' : 'போதுமான Star இல்லை. :('
+	},
+	msgRestart = {
+		'en' : 'Restart game?',
+		'bm' : 'Mulakan semula？',
+		'cn' : '重新启动游戏？',
+		'tm' : 'விளையாட்டை மறுதொடக்கம் செய்யவா?'
+	},
+	msgEarn = {
+		'en' : 'Yay, you earn 10 Star!',
+		'bm' : 'Tahniah, anda mendapat 10 Star!',
+		'cn' : '哇，您获得10 Star！',
+		'tm' : 'வாழ்த்துக்கள், நீங்கள் 10 Star சம்பாதிக்கிறீர்கள்!'
+	};
 var admobid = {
-			banner: 'ca-app-pub-7511151038516922/6165804865',
-			interstitial: 'ca-app-pub-7511151038516922/3548408058',
-			rewardvideo: 'ca-app-pub-7511151038516922/6238150573'
-		}
+				banner: 'ca-app-pub-7511151038516922/6165804865',
+				interstitial: 'ca-app-pub-7511151038516922/3548408058',
+				rewardvideo: 'ca-app-pub-7511151038516922/6238150573'
+			};
 var apps = new Framework7({
-			  root: '#app',
-			  id: 'com.wkv.game',
-			  name: 'WOOHO',
-			  theme: 'md',
-			  version: "1.0.12",
-			  rtl: false,
-			  language: "en-US"
-		  });
+			root: '#app',
+			id: 'com.wkv.game',
+			name: 'WOOHO',
+			theme: 'md',
+			version: "1.0.13",
+			rtl: false,
+			language: "en-US"
+		});
 		  
 var app = {
     initialize: function() {
@@ -32,7 +56,7 @@ var app = {
 		admob.banner.config({
 			id: admobid.banner,
 			isTesting: true,
-			autoShow: true
+			autoShow: false
 		})
 		admob.banner.prepare();
 
@@ -43,21 +67,68 @@ var app = {
 		})
 		admob.interstitial.prepare();
 		
+		admob.rewardvideo.config({
+			id: admobid.rewardvideo,
+			isTesting: true,
+			autoShow: false
+		})
+		admob.rewardvideo.prepare()
+		
 		window.open = cordova.InAppBrowser.open;
 		document.addEventListener("backbutton", sys.onBackKeyDown, false);
 		
 		$('.btn-ecn').addClass('disabled');
 		$('.btn-ecn').prop('disabled', true);
 		
+		document.addEventListener('admob.banner.events.LOAD', function(event){
+			admob.banner.show();
+		});
+		
+		document.addEventListener('admob.banner.events.CLOSE', function(event){
+			admob.banner.prepare();
+		});
+		
 		document.addEventListener('admob.interstitial.events.LOAD', function(event){
-			$('.btn-ecn').removeClass('disabled');
-			$('.btn-ecn').prop('disabled', false);
+			
 		});
 		
 		document.addEventListener('admob.interstitial.events.CLOSE', function(event){
+			
+		});
+		
+		document.addEventListener('admob.rewardvideo.events.LOAD', function(event) {
+			$('.btn-ecn').removeClass('disabled');
+			$('.btn-ecn').prop('disabled', false);
+		});
+
+		document.addEventListener('admob.rewardvideo.events.CLOSE', function(event) {
 			$('.btn-ecn').addClass('disabled');
 			$('.btn-ecn').prop('disabled', true);
-			admob.interstitial.prepare();
+			admob.rewardvideo.prepare();
+		});
+		
+		document.addEventListener('admob.rewardvideo.events.REWARD', function(event) {
+			var DATA = JSON.parse(STORAGE.getItem('data'));
+			
+			var curCoin = b(Object.keys(DATA.coin)[1]);
+			curCoin+=10;
+			var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
+			
+			DATA.coin = {};
+			DATA.coin[T] = F;
+			DATA.coin[S] = K;
+			DATA.coin[J] = Q;
+			DATA.coin[E] = G;
+			STORAGE.setItem('data', JSON.stringify(DATA));
+			
+			$('#wooho-coin').find('.fab-text').text(Q);
+			
+			apps.toast.create({
+				icon: '<i class="material-icons">stars</i>',
+				text: msgEarn[JSON.parse(STORAGE.getItem('data')).configuration.language],
+				position: 'center',
+				closeTimeout: 2000,
+			}).open();
 		});
     },
 	
@@ -68,32 +139,8 @@ var app = {
 };
 
 $(document).ready(function(){
-	var ajaxData = '', postAjaxData = '', 
-		msgPracticeConfirm = {
-			'en' : 'Deduct 1 Star per minute?',
-			'bm' : 'Gunakan 1 Star seminit?',
-			'cn' : '每分钟扣除 1 颗 Star ？',
-			'tm' : 'நிமிடத்திற்கு 1 Star ஐக் கழிக்கவா?'
-		},
-		msgNotEnough = {
-			'en' : 'Not enough Star. :(',
-			'bm' : 'Tidak cukup Star. :(',
-			'cn' : 'Star 不够。 :(',
-			'tm' : 'போதுமான Star இல்லை. :('
-		},
-		msgRestart = {
-			'en' : 'Restart game?',
-			'bm' : 'Mulakan semula？',
-			'cn' : '重新启动游戏？',
-			'tm' : 'விளையாட்டை மறுதொடக்கம் செய்யவா?'
-		},
-		msgEarn = {
-			'en' : 'Yay, you earn 10 Star!',
-			'bm' : 'Tahniah, anda mendapat 10 Star!',
-			'cn' : '哇，您获得10 Star！',
-			'tm' : 'வாழ்த்துக்கள், நீங்கள் 10 Star சம்பாதிக்கிறீர்கள்!'
-		};
-	
+	var ajaxData = '', postAjaxData = '';
+		
 	// Welcome Page
 	
 	$('.wcm-btn-lgg').on('click', function(){
@@ -540,6 +587,10 @@ $(document).ready(function(){
 				
 				apps.loginScreen.close($('#game'), true);
 				apps.loginScreen.open($('#ptc'), true);
+				
+				if(admob){
+					admob.banner.show();
+				}
 			}
 		});
 	});
@@ -1063,28 +1114,7 @@ $(document).ready(function(){
 	
 	$('button.btn-ecn').on('click', function(){
 		if(c(STORAGE.getItem('data'))){
-			admob.interstitial.show();
-			// var DATA = JSON.parse(STORAGE.getItem('data'));
-			
-			// var curCoin = b(Object.keys(DATA.coin)[1]);
-			// curCoin+=10;
-			// var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
-			
-			// DATA.coin = {};
-			// DATA.coin[T] = F;
-			// DATA.coin[S] = K;
-			// DATA.coin[J] = Q;
-			// DATA.coin[E] = G;
-			// STORAGE.setItem('data', JSON.stringify(DATA));
-			
-			// $('#wooho-coin').find('.fab-text').text(Q);
-			
-			// apps.toast.create({
-				// icon: '<i class="material-icons">stars</i>',
-				// text: msgEarn[JSON.parse(STORAGE.getItem('data')).configuration.language],
-				// position: 'center',
-				// closeTimeout: 2000,
-			// }).open();
+			admob.rewardvideo.show();
 		}else{
 			apps.toast.create({
 				icon: '<i class="material-icons">bug_report</i>',
@@ -1582,6 +1612,9 @@ sys = {
 					gameTimer = 0;
 				}
 			}, 1000);
+		}
+		if(admob){
+			admob.banner.hide();
 		}
 		apps.dialog.close();
 	},
