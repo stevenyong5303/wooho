@@ -49,7 +49,7 @@
 	<plugin name="cordova-plugin-admob-free">
 		<variable name="ADMOB_APP_ID" value="ca-app-pub-7511151038516922~4581260453" />
 	</plugin>
-	<plugin name="cordova-plugin-admob-mediation-inmobi" />
+	<plugin name="cordova-admob-inmobi" />
 	
 	<plugin name="cordova-plugin-device" />
 	<plugin name="cordova-plugin-inappbrowser" />
