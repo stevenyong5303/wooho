@@ -1,6 +1,7 @@
 var $$ = Dom7;
 var sys = new Object();
 var STORAGE = window.localStorage;
+<<<<<<< HEAD
 var requestInterval, requestTimer = 0, gameInterval, gameTimer = 0, adInterval, adTimer = 0;
 var apps = new Framework7({
 			root: '#app',
@@ -11,6 +12,9 @@ var apps = new Framework7({
 			rtl: false,
 			language: "en-US"
 		});
+=======
+var requestInterval, requestTimer = 0, gameInterval, gameTimer = 0;
+>>>>>>> parent of 652592e... 1.0.16
 var msgPracticeConfirm = {
 		'en' : 'Deduct 1 Star per minute?',
 		'bm' : 'Gunakan 1 Star seminit?',
@@ -34,18 +38,21 @@ var msgPracticeConfirm = {
 		'bm' : 'Tahniah, anda mendapat 10 Star!',
 		'cn' : '哇，您获得10 Star！',
 		'tm' : 'வாழ்த்துக்கள், நீங்கள் 10 Star சம்பாதிக்கிறீர்கள்!'
-	},
-	msgEarnError = {
-		'en' : 'Watch advertisement for 30 seconds to earn Star.',
-		'bm' : 'Tonton iklan selama 30 saat untuk mendapatkan Star.',
-		'cn' : '观看广告30秒钟即可赚取Star。',
-		'tm' : 'Star சம்பாதிக்க 30 விநாடிகள் விளம்பரத்தைப் பாருங்கள்.'
 	};
 var admobid = {
 				banner: 'ca-app-pub-7511151038516922/6165804865',
 				interstitial: 'ca-app-pub-7511151038516922/3548408058',
 				rewardvideo: 'ca-app-pub-7511151038516922/6238150573'
 			};
+var apps = new Framework7({
+			root: '#app',
+			id: 'com.wkv.game',
+			name: 'WOOHO',
+			theme: 'md',
+			version: "1.0.15",
+			rtl: false,
+			language: "en-US"
+		});
 		  
 var app = {
     initialize: function() {
@@ -76,7 +83,7 @@ var app = {
 		admob.rewardvideo.config({
 			id: admobid.rewardvideo,
 			isTesting: true,
-			autoShow: false
+			autoShow: true
 		})
 		admob.rewardvideo.prepare()
 		
@@ -95,6 +102,7 @@ var app = {
 		});
 		
 		document.addEventListener('admob.interstitial.events.LOAD', function(event){
+<<<<<<< HEAD
 			// $('.btn-ecn').removeClass('disabled');
 			// $('.btn-ecn').prop('disabled', false);
 		});
@@ -153,10 +161,48 @@ var app = {
 
 		document.addEventListener('admob.rewardvideo.events.CLOSE', function(event){
 			// admob.rewardvideo.prepare();
+=======
+			
+		});
+		
+		document.addEventListener('admob.interstitial.events.CLOSE', function(event){
+			
+		});
+		
+		document.addEventListener('admob.rewardvideo.events.LOAD', function(event){
+			$('.btn-ecn').removeClass('disabled');
+			$('.btn-ecn').prop('disabled', false);
+		});
+
+		document.addEventListener('admob.rewardvideo.events.CLOSE', function(event){
+			$('.btn-ecn').addClass('disabled');
+			$('.btn-ecn').prop('disabled', true);
+			admob.rewardvideo.prepare();
+>>>>>>> parent of 652592e... 1.0.16
 		});
 		
 		document.addEventListener('admob.rewardvideo.events.REWARD', function(event){
+			// var DATA = JSON.parse(STORAGE.getItem('data'));
 			
+			// var curCoin = b(Object.keys(DATA.coin)[1]);
+			// curCoin+=10;
+			// var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
+			
+			// DATA.coin = {};
+			// DATA.coin[T] = F;
+			// DATA.coin[S] = K;
+			// DATA.coin[J] = Q;
+			// DATA.coin[E] = G;
+			// STORAGE.setItem('data', JSON.stringify(DATA));
+			
+			// $('#wooho-coin').find('.fab-text').text(Q);
+			
+			// apps.toast.create({
+				// icon: '<i class="material-icons">stars</i>',
+				// text: msgEarn[JSON.parse(STORAGE.getItem('data')).configuration.language],
+				// position: 'center',
+				// closeTimeout: 2000,
+			// }).open();
 		});
     },
 	
