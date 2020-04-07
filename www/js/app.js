@@ -7,7 +7,7 @@ var apps = new Framework7({
 			id: 'com.wkv.game',
 			name: 'WOOHO',
 			theme: 'md',
-			version: "1.0.30",
+			version: "1.0.31",
 			rtl: false,
 			language: "en-US"
 		});
@@ -30,16 +30,22 @@ var msgPracticeConfirm = {
 		'tm' : 'விளையாட்டை மறுதொடக்கம் செய்யவா?'
 	},
 	msgEarn = {
-		'en' : 'Yay, you earn 10 Star!',
-		'bm' : 'Tahniah, anda mendapat 10 Star!',
-		'cn' : '哇，您获得10 Star！',
-		'tm' : 'வாழ்த்துக்கள், நீங்கள் 10 Star சம்பாதிக்கிறீர்கள்!'
+		'en' : 'Yay, you earn 5 Star!',
+		'bm' : 'Tahniah, anda mendapat 5 Star!',
+		'cn' : '哇，您获得 5 Star！',
+		'tm' : 'வாழ்த்துக்கள், நீங்கள் 5 Star சம்பாதிக்கிறீர்கள்!'
 	},
-	msgEarnError = {
-		'en' : 'Watch advertisement for 30 seconds to earn Star.',
-		'bm' : 'Tonton iklan selama 30 saat untuk mendapatkan Star.',
-		'cn' : '观看广告30秒钟即可赚取Star。',
-		'tm' : 'Star சம்பாதிக்க 30 விநாடிகள் விளம்பரத்தைப் பாருங்கள்.'
+	msgNotEnoughExit = {
+		'en' : 'Exit',
+		'bm' : 'Keluar',
+		'cn' : '退出',
+		'tm' : 'வெளியேறு'
+	},
+	msgNotEnoughEarn = {
+		'en' : 'Earn Star',
+		'bm' : 'Dapatkan Star',
+		'cn' : '赚 Star',
+		'tm' : 'Star சம்பாதி'
 	};
 var admobid = {
 				banner: 'ca-app-pub-7511151038516922/6165804865',
@@ -89,9 +95,6 @@ var app = {
 		window.open = cordova.InAppBrowser.open;
 		document.addEventListener("backbutton", sys.onBackKeyDown, false);
 		
-		$('.btn-ecn').addClass('disabled');
-		$('.btn-ecn').prop('disabled', true);
-		
 		document.addEventListener('admob.banner.events.LOAD', function(event){
 			// admob.banner.show();
 		});
@@ -115,8 +118,7 @@ var app = {
 		});
 		
 		document.addEventListener('admob.rewardvideo.events.LOAD_FAIL', function(event){
-			$('.btn-ecn').text('Load Fail');
-			apps.dialog.alert(JSON.stringify(event));
+			console.log('Admob rewardvideo load fail.');
 		});
 		
 		document.addEventListener('admob.rewardvideo.events.LOAD', function(event){
@@ -135,7 +137,7 @@ var app = {
 			var DATA = JSON.parse(STORAGE.getItem('data'));
 			
 			var curCoin = b(Object.keys(DATA.coin)[1]);
-			curCoin+=10;
+			curCoin+=5;
 			var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
 			
 			DATA.coin = {};
@@ -1613,7 +1615,26 @@ sys = {
 						var curCoin = b(Object.keys(DATA.coin)[1]);
 						
 						if(curCoin<1){
-							apps.dialog.alert((msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]), '');
+							apps.dialog.create({
+								title : '',
+								text : (msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]),
+								closeByBackdropClick: false,
+								buttons: [
+									{
+										text: (msgNotEnoughEarn[JSON.parse(STORAGE.getItem('data')).configuration.language]),
+									},{
+										text: (msgNotEnoughExit[JSON.parse(STORAGE.getItem('data')).configuration.language]),
+									}
+								],
+								onClick: function(e, num){
+									if(num == 0){
+										admob.rewardvideo.show();
+									}else{
+										$('#game .navbar .link.back').click();
+										gameTimer = 0;
+									}
+								}
+							}).open();
 						}else{
 							curCoin--;
 							var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
@@ -1626,12 +1647,12 @@ sys = {
 							STORAGE.setItem('data', JSON.stringify(DATA));
 							
 							$('#wooho-coin').find('.fab-text').text(Q);
+							gameTimer = 0;
 						}
 					}else{
 						STORAGE.removeItem('data');
 						location.reload();
 					}
-					gameTimer = 0;
 				}
 			}, 1000);
 		}
