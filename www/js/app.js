@@ -36,7 +36,7 @@ var apps = new Framework7({
 			id: 'com.wkv.game',
 			name: 'WOOHO',
 			theme: 'md',
-			version: "1.0.13",
+			version: "1.0.14",
 			rtl: false,
 			language: "en-US"
 		});
@@ -70,7 +70,7 @@ var app = {
 		admob.rewardvideo.config({
 			id: admobid.rewardvideo,
 			isTesting: true,
-			autoShow: false
+			autoShow: true
 		})
 		admob.rewardvideo.prepare()
 		
@@ -81,7 +81,7 @@ var app = {
 		$('.btn-ecn').prop('disabled', true);
 		
 		document.addEventListener('admob.banner.events.LOAD', function(event){
-			admob.banner.show();
+			// admob.banner.show();
 		});
 		
 		document.addEventListener('admob.banner.events.CLOSE', function(event){
