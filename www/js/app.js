@@ -7,7 +7,7 @@ var apps = new Framework7({
 			id: 'com.wkv.game',
 			name: 'WOOHO',
 			theme: 'md',
-			version: "1.0.24",
+			version: "1.0.25",
 			rtl: false,
 			language: "en-US"
 		});
@@ -95,73 +95,57 @@ var app = {
 		});
 		
 		document.addEventListener('admob.interstitial.events.LOAD', function(event){
-			$('.btn-ecn').removeClass('disabled');
-			$('.btn-ecn').prop('disabled', false);
+			// admob.interstitial.show();
 		});
 		
 		document.addEventListener('admob.interstitial.events.OPEN', function(event){
-			adInterval = window.setInterval(function(){ adTimer++; }, 1000);
+			// admob.interstitial.show();
 		});
 		
 		document.addEventListener('admob.interstitial.events.CLOSE', function(event){
-			if(adTimer >= 30){
-				var DATA = JSON.parse(STORAGE.getItem('data'));
-			
-				var curCoin = b(Object.keys(DATA.coin)[1]);
-				curCoin+=10;
-				var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
-				
-				DATA.coin = {};
-				DATA.coin[T] = F;
-				DATA.coin[S] = K;
-				DATA.coin[J] = Q;
-				DATA.coin[E] = G;
-				STORAGE.setItem('data', JSON.stringify(DATA));
-				
-				$('#wooho-coin').find('.fab-text').text(Q);
-				
-				apps.toast.create({
-					icon: '<i class="material-icons">stars</i>',
-					text: msgEarn[JSON.parse(STORAGE.getItem('data')).configuration.language],
-					position: 'center',
-					closeTimeout: 2000,
-				}).open();
-				
-				window.clearInterval(adInterval);
-				adTimer = 0;
-			}else{
-				apps.toast.create({
-					icon: '<i class="material-icons">sentiment_very_dissatisfied</i>',
-					text: msgEarnError[JSON.parse(STORAGE.getItem('data')).configuration.language],
-					position: 'center',
-					closeTimeout: 2000,
-				}).open();
-				
-				window.clearInterval(adInterval);
-				adTimer = 0;
-			}
-			
-			$('.btn-ecn').addClass('disabled');
-			$('.btn-ecn').prop('disabled', true);
 			admob.interstitial.prepare();
 		});
 		
 		document.addEventListener('admob.rewardvideo.events.LOAD', function(event){
-			
+			$('.btn-ecn').removeClass('disabled');
+			$('.btn-ecn').prop('disabled', false);
 		});
 
 		document.addEventListener('admob.rewardvideo.events.CLOSE', function(event){
-			
+			$('.btn-ecn').addClass('disabled');
+			$('.btn-ecn').prop('disabled', true);
 		});
 		
 		document.addEventListener('admob.rewardvideo.events.REWARD', function(event){
+			var DATA = JSON.parse(STORAGE.getItem('data'));
 			
+			var curCoin = b(Object.keys(DATA.coin)[1]);
+			curCoin+=10;
+			var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
+			
+			DATA.coin = {};
+			DATA.coin[T] = F;
+			DATA.coin[S] = K;
+			DATA.coin[J] = Q;
+			DATA.coin[E] = G;
+			STORAGE.setItem('data', JSON.stringify(DATA));
+			
+			$('#wooho-coin').find('.fab-text').text(Q);
+			
+			apps.toast.create({
+				icon: '<i class="material-icons">stars</i>',
+				text: msgEarn[JSON.parse(STORAGE.getItem('data')).configuration.language],
+				position: 'center',
+				closeTimeout: 2000,
+			}).open();
+			
+			$('.btn-ecn').addClass('disabled');
+			$('.btn-ecn').prop('disabled', true);
 		});
     },
 	
     receivedEvent: function(id){
         console.log('Received Event: ' + id);
-		
     }
 };
 
@@ -1141,7 +1125,7 @@ $(document).ready(function(){
 	
 	$('button.btn-ecn').on('click', function(){
 		if(c(STORAGE.getItem('data'))){
-			admob.interstitial.show();
+			admob.rewardvideo.show();
 		}else{
 			apps.toast.create({
 				icon: '<i class="material-icons">bug_report</i>',

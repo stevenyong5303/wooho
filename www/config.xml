@@ -4,7 +4,7 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:gap = "http://phonegap.com/ns/1.0"
         id        = "com.wkv.game"
-        version   = "1.0.24">
+        version   = "1.0.25">
 
     <name>WOHOO</name>
 
@@ -49,6 +49,7 @@
 	<plugin name="cordova-plugin-admob-free">
 		<variable name="ADMOB_APP_ID" value="ca-app-pub-7511151038516922~4581260453" />
 	</plugin>
+	<plugin name="cordova-admob-inmobi" />
 	
 	<plugin name="cordova-plugin-device" />
 	<plugin name="cordova-plugin-inappbrowser" />
