@@ -36,7 +36,7 @@ var apps = new Framework7({
 			id: 'com.wkv.game',
 			name: 'WOOHO',
 			theme: 'md',
-			version: "1.0.14",
+			version: "1.0.15",
 			rtl: false,
 			language: "en-US"
 		});
@@ -56,7 +56,7 @@ var app = {
 		admob.banner.config({
 			id: admobid.banner,
 			isTesting: true,
-			autoShow: false
+			autoShow: true
 		})
 		admob.banner.prepare();
 
@@ -96,39 +96,39 @@ var app = {
 			
 		});
 		
-		document.addEventListener('admob.rewardvideo.events.LOAD', function(event) {
+		document.addEventListener('admob.rewardvideo.events.LOAD', function(event){
 			$('.btn-ecn').removeClass('disabled');
 			$('.btn-ecn').prop('disabled', false);
 		});
 
-		document.addEventListener('admob.rewardvideo.events.CLOSE', function(event) {
+		document.addEventListener('admob.rewardvideo.events.CLOSE', function(event){
 			$('.btn-ecn').addClass('disabled');
 			$('.btn-ecn').prop('disabled', true);
 			admob.rewardvideo.prepare();
 		});
 		
-		document.addEventListener('admob.rewardvideo.events.REWARD', function(event) {
-			var DATA = JSON.parse(STORAGE.getItem('data'));
+		document.addEventListener('admob.rewardvideo.events.REWARD', function(event){
+			// var DATA = JSON.parse(STORAGE.getItem('data'));
 			
-			var curCoin = b(Object.keys(DATA.coin)[1]);
-			curCoin+=10;
-			var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
+			// var curCoin = b(Object.keys(DATA.coin)[1]);
+			// curCoin+=10;
+			// var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
 			
-			DATA.coin = {};
-			DATA.coin[T] = F;
-			DATA.coin[S] = K;
-			DATA.coin[J] = Q;
-			DATA.coin[E] = G;
-			STORAGE.setItem('data', JSON.stringify(DATA));
+			// DATA.coin = {};
+			// DATA.coin[T] = F;
+			// DATA.coin[S] = K;
+			// DATA.coin[J] = Q;
+			// DATA.coin[E] = G;
+			// STORAGE.setItem('data', JSON.stringify(DATA));
 			
-			$('#wooho-coin').find('.fab-text').text(Q);
+			// $('#wooho-coin').find('.fab-text').text(Q);
 			
-			apps.toast.create({
-				icon: '<i class="material-icons">stars</i>',
-				text: msgEarn[JSON.parse(STORAGE.getItem('data')).configuration.language],
-				position: 'center',
-				closeTimeout: 2000,
-			}).open();
+			// apps.toast.create({
+				// icon: '<i class="material-icons">stars</i>',
+				// text: msgEarn[JSON.parse(STORAGE.getItem('data')).configuration.language],
+				// position: 'center',
+				// closeTimeout: 2000,
+			// }).open();
 		});
     },
 	
@@ -1381,18 +1381,7 @@ sys = {
 			
 			return false;
 		}else{
-			function onConfirm(buttonIndex) {
-				if(buttonIndex == 1){
-					window.close();
-				}
-			}
-
-			navigator.notification.confirm(
-				'Exit the app?',
-				onConfirm,
-				'Confirmation',
-				['OK','Cancel']
-			);
+			window.close();
 		}
 	},
 	'onLoadHandler' : function(game){
