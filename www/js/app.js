@@ -2,12 +2,17 @@ var $$ = Dom7;
 var sys = new Object();
 var STORAGE = window.localStorage;
 var requestInterval, requestTimer = 0, gameInterval, gameTimer = 0;
+var admobid = {
+			banner: 'ca-app-pub-7511151038516922/6165804865',
+			interstitial: 'ca-app-pub-7511151038516922/3548408058',
+			rewardvideo: 'ca-app-pub-7511151038516922/6238150573'
+		}
 var apps = new Framework7({
 			  root: '#app',
 			  id: 'com.wkv.game',
 			  name: 'WOOHO',
 			  theme: 'md',
-			  version: "1.0.11",
+			  version: "1.0.12",
 			  rtl: false,
 			  language: "en-US"
 		  });
@@ -25,23 +30,40 @@ var app = {
         app.receivedEvent('deviceready');
 		
 		admob.banner.config({
-			id: 'ca-app-pub-7511151038516922/6165804865',
+			id: admobid.banner,
+			isTesting: true,
+			autoShow: true
 		})
-		
+		admob.banner.prepare();
+
 		admob.interstitial.config({
-			id: 'ca-app-pub-7511151038516922/3548408058',
+			id: admobid.interstitial,
+			isTesting: true,
+			autoShow: false
 		})
-		
-		admob.rewardvideo.config({
-			id: 'ca-app-pub-7511151038516922/6238150573',
-		})
+		admob.interstitial.prepare();
 		
 		window.open = cordova.InAppBrowser.open;
 		document.addEventListener("backbutton", sys.onBackKeyDown, false);
+		
+		$('.btn-ecn').addClass('disabled');
+		$('.btn-ecn').prop('disabled', true);
+		
+		document.addEventListener('admob.interstitial.events.LOAD', function(event){
+			$('.btn-ecn').removeClass('disabled');
+			$('.btn-ecn').prop('disabled', false);
+		});
+		
+		document.addEventListener('admob.interstitial.events.CLOSE', function(event){
+			$('.btn-ecn').addClass('disabled');
+			$('.btn-ecn').prop('disabled', true);
+			admob.interstitial.prepare();
+		});
     },
 	
     receivedEvent: function(id){
         console.log('Received Event: ' + id);
+		
     }
 };
 
@@ -1041,9 +1063,7 @@ $(document).ready(function(){
 	
 	$('button.btn-ecn').on('click', function(){
 		if(c(STORAGE.getItem('data'))){
-			
-			admob.rewardvideo.prepare();
-			admob.rewardvideo.show();
+			admob.interstitial.show();
 			// var DATA = JSON.parse(STORAGE.getItem('data'));
 			
 			// var curCoin = b(Object.keys(DATA.coin)[1]);
