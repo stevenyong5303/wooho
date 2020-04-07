@@ -7,7 +7,7 @@ var apps = new Framework7({
 			id: 'com.wkv.game',
 			name: 'WOOHO',
 			theme: 'md',
-			version: "1.0.21",
+			version: "1.0.22",
 			rtl: false,
 			language: "en-US"
 		});
@@ -62,7 +62,7 @@ var app = {
 		admob.banner.config({
 			id: admobid.banner,
 			isTesting: true,
-			autoShow: false
+			autoShow: true
 		})
 		admob.banner.prepare();
 
@@ -615,10 +615,6 @@ $(document).ready(function(){
 				
 				apps.loginScreen.close($('#game'), true);
 				apps.loginScreen.open($('#ptc'), true);
-				
-				if(admob){
-					admob.banner.show();
-				}
 			}
 		});
 	});
