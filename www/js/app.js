@@ -7,7 +7,7 @@ var apps = new Framework7({
 			  id: 'com.wkv.game',
 			  name: 'WOOHO',
 			  theme: 'md',
-			  version: "1.0.9",
+			  version: "1.0.10",
 			  rtl: false,
 			  language: "en-US"
 		  });
@@ -23,6 +23,18 @@ var app = {
 	
     onDeviceReady: function(){
         app.receivedEvent('deviceready');
+		
+		admob.banner.config({
+			id: 'ca-app-pub-7511151038516922/6165804865',
+		})
+		
+		admob.interstitial.config({
+			id: 'ca-app-pub-7511151038516922/3548408058',
+		})
+		
+		admob.rewardvideo.config({
+			id: 'ca-app-pub-7511151038516922/6238150573',
+		})
 		
 		window.open = cordova.InAppBrowser.open;
 		document.addEventListener("backbutton", sys.onBackKeyDown, false);
@@ -1029,27 +1041,30 @@ $(document).ready(function(){
 	
 	$('button.btn-ecn').on('click', function(){
 		if(c(STORAGE.getItem('data'))){
-			var DATA = JSON.parse(STORAGE.getItem('data'));
 			
-			var curCoin = b(Object.keys(DATA.coin)[1]);
-			curCoin+=10;
-			var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
+			admob.rewardvideo.prepare();
+			admob.rewardvideo.show();
+			// var DATA = JSON.parse(STORAGE.getItem('data'));
 			
-			DATA.coin = {};
-			DATA.coin[T] = F;
-			DATA.coin[S] = K;
-			DATA.coin[J] = Q;
-			DATA.coin[E] = G;
-			STORAGE.setItem('data', JSON.stringify(DATA));
+			// var curCoin = b(Object.keys(DATA.coin)[1]);
+			// curCoin+=10;
+			// var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
 			
-			$('#wooho-coin').find('.fab-text').text(Q);
+			// DATA.coin = {};
+			// DATA.coin[T] = F;
+			// DATA.coin[S] = K;
+			// DATA.coin[J] = Q;
+			// DATA.coin[E] = G;
+			// STORAGE.setItem('data', JSON.stringify(DATA));
 			
-			apps.toast.create({
-				icon: '<i class="material-icons">stars</i>',
-				text: msgEarn[JSON.parse(STORAGE.getItem('data')).configuration.language],
-				position: 'center',
-				closeTimeout: 2000,
-			}).open();
+			// $('#wooho-coin').find('.fab-text').text(Q);
+			
+			// apps.toast.create({
+				// icon: '<i class="material-icons">stars</i>',
+				// text: msgEarn[JSON.parse(STORAGE.getItem('data')).configuration.language],
+				// position: 'center',
+				// closeTimeout: 2000,
+			// }).open();
 		}else{
 			apps.toast.create({
 				icon: '<i class="material-icons">bug_report</i>',
