@@ -7,7 +7,7 @@ var apps = new Framework7({
 			id: 'com.wkv.game',
 			name: 'WOOHO',
 			theme: 'md',
-			version: "1.0.18",
+			version: "1.0.19",
 			rtl: false,
 			language: "en-US"
 		});
@@ -44,7 +44,7 @@ var msgPracticeConfirm = {
 var admobid = {
 				banner: 'ca-app-pub-7511151038516922/6165804865',
 				interstitial: 'ca-app-pub-7511151038516922/3548408058',
-				rewardvideo: '1585274953560'
+				rewardvideo: 'ca-app-pub-7511151038516922/6238150573'
 			};
 		  
 var app = {
