@@ -7,7 +7,7 @@ var apps = new Framework7({
 			id: 'com.wkv.game',
 			name: 'WOOHO',
 			theme: 'md',
-			version: "1.0.20",
+			version: "1.0.21",
 			rtl: false,
 			language: "en-US"
 		});
@@ -143,16 +143,16 @@ var app = {
 			
 			// $('.btn-ecn').addClass('disabled');
 			// $('.btn-ecn').prop('disabled', true);
-			admob.interstitial.prepare();
+			// admob.interstitial.prepare();
 		});
 		
 		document.addEventListener('admob.rewardvideo.events.LOAD', function(event){
-			$('.btn-ecn').removeClass('disabled');
-			$('.btn-ecn').prop('disabled', false);
+			// $('.btn-ecn').removeClass('disabled');
+			// $('.btn-ecn').prop('disabled', false);
 		});
 
 		document.addEventListener('admob.rewardvideo.events.CLOSE', function(event){
-			admob.rewardvideo.prepare();
+			// admob.rewardvideo.prepare();
 		});
 		
 		document.addEventListener('admob.rewardvideo.events.REWARD', function(event){
@@ -1142,7 +1142,7 @@ $(document).ready(function(){
 	
 	$('button.btn-ecn').on('click', function(){
 		if(c(STORAGE.getItem('data'))){
-			admob.rewardvideo.show();
+			// admob.rewardvideo.show();
 		}else{
 			apps.toast.create({
 				icon: '<i class="material-icons">bug_report</i>',
