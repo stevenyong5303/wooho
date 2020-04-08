@@ -1,13 +1,13 @@
 var $$ = Dom7;
 var sys = new Object();
 var STORAGE = window.localStorage;
-var requestInterval, requestTimer = 0, gameInterval, gameTimer = 0, adInterval, adTimer = 0, interstitialReady = false;
+var requestInterval, requestTimer = 0, gameInterval, gameTimer = 0, adInterval, adTimer = 0, interstitialReady = false, inEarnAd = false;
 var apps = new Framework7({
 			root: '#app',
 			id: 'com.wkv.game',
 			name: 'WOOHO',
 			theme: 'md',
-			version: "1.0.31",
+			version: "1.0.32",
 			rtl: false,
 			language: "en-US"
 		});
@@ -88,7 +88,7 @@ var app = {
 		admob.rewardvideo.prepare(rewardConfig)
 		.then((ok) => {
 			console.log('Admob rewardvideo success.');
-		}).catch(function (error) {
+		}).catch(function(error){
 			console.log('Admob rewardvideo fail.');
 		});
 		
@@ -131,6 +131,7 @@ var app = {
 			$('.btn-ecn').prop('disabled', true);
 			
 			admob.rewardvideo.prepare();
+			inEarnAd = false;
 		});
 		
 		document.addEventListener('admob.rewardvideo.events.REWARD', function(event){
@@ -160,6 +161,7 @@ var app = {
 			$('.btn-ecn').prop('disabled', true);
 			
 			admob.rewardvideo.prepare();
+			inEarnAd = false;
 		});
     },
 	
@@ -683,7 +685,7 @@ $(document).ready(function(){
 				success: function(str){
 					apps.dialog.close();
 					
-					if(interstitialReady){
+					if(interstitialReady && (gameTimer % 4 == 2)){
 						admob.interstitial.show();
 					}else{
 						sys.replayGame();
@@ -1615,26 +1617,32 @@ sys = {
 						var curCoin = b(Object.keys(DATA.coin)[1]);
 						
 						if(curCoin<1){
-							apps.dialog.create({
-								title : '',
-								text : (msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]),
-								closeByBackdropClick: false,
-								buttons: [
-									{
-										text: (msgNotEnoughEarn[JSON.parse(STORAGE.getItem('data')).configuration.language]),
-									},{
-										text: (msgNotEnoughExit[JSON.parse(STORAGE.getItem('data')).configuration.language]),
+							if(!inEarnAd){
+								inEarnAd = true;
+							
+								apps.dialog.create({
+									title : '',
+									text : (msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]),
+									closeByBackdropClick: false,
+									buttons: [
+										{
+											text: (msgNotEnoughEarn[JSON.parse(STORAGE.getItem('data')).configuration.language]),
+										},{
+											text: (msgNotEnoughExit[JSON.parse(STORAGE.getItem('data')).configuration.language]),
+										}
+									],
+									onClick: function(e, num){
+										if(num == 0){
+											admob.rewardvideo.show();
+											inEarnAd = true;
+										}else{
+											$('#game .navbar .link.back').click();
+											gameTimer = 0;
+											inEarnAd = false;
+										}
 									}
-								],
-								onClick: function(e, num){
-									if(num == 0){
-										admob.rewardvideo.show();
-									}else{
-										$('#game .navbar .link.back').click();
-										gameTimer = 0;
-									}
-								}
-							}).open();
+								}).open();
+							}
 						}else{
 							curCoin--;
 							var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
