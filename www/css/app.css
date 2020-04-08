@@ -49,7 +49,7 @@
 	transform: rotate(90deg);
 	position: absolute;
 }
-div#scoreDay.tab, div#scoreWeek.tab, div#scoreMonth.tab{
+div#scoreDay.tab, div#scoreWeek.tab, div#scoreMonth.tab, div#scorePNW.tab{
 	padding-top: 0;
 }
 #game .page-content.iframe{

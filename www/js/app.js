@@ -1,13 +1,17 @@
 var $$ = Dom7;
 var sys = new Object();
 var STORAGE = window.localStorage;
-var requestInterval, requestTimer = 0, gameInterval, gameTimer = 0, adInterval, adTimer = 0, interstitialReady = false, inEarnAd = false, rewardReady = false;
+var requestInterval, requestTimer = 0,
+	gameInterval, gameTimer = 0,
+	adInterval, adTimer = 0,
+	gamePnwInterval, gamePnwTimer = 0,
+	interstitialReady = false, inEarnAd = false, rewardReady = false;
 var apps = new Framework7({
 			root: '#app',
 			id: 'com.wkv.game',
 			name: 'WOOHO',
 			theme: 'md',
-			version: "1.0.33",
+			version: "1.0.34",
 			rtl: false,
 			language: "en-US"
 		});
@@ -16,6 +20,62 @@ var msgPracticeConfirm = {
 		'bm' : 'Gunakan 1 Star seminit?',
 		'cn' : '每分钟扣除 1 颗 Star ？',
 		'tm' : 'நிமிடத்திற்கு 1 Star ஐக் கழிக்கவா?'
+	},
+	msgPnwConfirm = {
+		'en' : 'Deduct 50 Star?',
+		'bm' : 'Gunakan 50 Star?',
+		'cn' : '扣除 50 颗 Star ？',
+		'tm' : '50 Star ஐக் கழிக்கவா?'
+	},
+	msgEndPnw = {
+		'en' : 'End the game?',
+		'bm' : 'Tamatkan permainan?',
+		'cn' : '结束游戏？',
+		'tm' : 'விளையாட்டை முடிக்கவா?'
+	},
+	msgPnwCountDown = {
+		'300' : {
+			'en' : 'You have 5 minutes left.',
+			'bm' : 'Anda mempunyai 5 minit lagi.',
+			'cn' : '还剩 5 分钟。',
+			'tm' : 'உங்களுக்கு 5 நிமிடங்கள் உள்ளன.'
+		},
+		'240' : {
+			'en' : 'You have 4 minutes left.',
+			'bm' : 'Anda mempunyai 4 minit lagi.',
+			'cn' : '还剩 4 分钟。',
+			'tm' : 'உங்களுக்கு 4 நிமிடங்கள் உள்ளன.'
+		},
+		'180' : {
+			'en' : 'You have 3 minutes left.',
+			'bm' : 'Anda mempunyai 3 minit lagi.',
+			'cn' : '还剩 3 分钟。',
+			'tm' : 'உங்களுக்கு 3 நிமிடங்கள் உள்ளன.'
+		},
+		'120' : {
+			'en' : 'You have 2 minutes left.',
+			'bm' : 'Anda mempunyai 2 minit lagi.',
+			'cn' : '还剩 2 分钟。',
+			'tm' : 'உங்களுக்கு 2 நிமிடங்கள் உள்ளன.'
+		},
+		'60' : {
+			'en' : 'You have 1 minute left.',
+			'bm' : 'Anda mempunyai 1 minit lagi.',
+			'cn' : '还剩 1 分钟。',
+			'tm' : 'உங்களுக்கு 1 நிமிடங்கள் உள்ளன.'
+		},
+		'30' : {
+			'en' : 'You have 30 seconds left.',
+			'bm' : 'Anda mempunyai 30 saat lagi.',
+			'cn' : '还剩 30 秒。',
+			'tm' : 'உங்களுக்கு 30 வினாடிகள் உள்ளன.'
+		},
+		'10' : {
+			'en' : 'You have 10 seconds left.',
+			'bm' : 'Anda mempunyai 10 saat lagi.',
+			'cn' : '还剩 10 秒。',
+			'tm' : 'உங்களுக்கு 10 வினாடிகள் உள்ளன.'
+		}
 	},
 	msgNotEnough = {
 		'en' : 'Not enough Star. :(',
@@ -425,9 +485,9 @@ $(document).ready(function(){
 									},
 									'coin' : {
 										'gY8aH' : true,
-										'YgjQ' : false,
-										'TadCax' : 50,
-										'SgQwef' : 'b961685dc6333717d9d8adb3b358a4e7'
+										'2gQ2' : false,
+										'TadCax' : 20,
+										'SgQwef' : 'dc9203d4bb1286b4ed91fd54a2e85991'
 									}
 								};
 								
@@ -520,6 +580,205 @@ $(document).ready(function(){
 		}
 	});
 	
+	// PnW Game Page
+	
+	$('#gamePNW .navbar .link.back').on('click', function(){
+		apps.dialog.confirm(msgEndPnw[JSON.parse(STORAGE.getItem('data')).configuration.language], '', function(){
+			var gameName = $('#gamePNW .iframe iframe').attr('id'),
+				gameScore = 0;
+				
+			switch(gameName){
+				case '2048':
+					gameScore = parseInt($('span#score', $('#gamePNW .iframe iframe').contents()).text());
+					break;
+				case 'flappy':
+					var digit = $('#currentscore img', $('#gamePNW .iframe iframe').contents()).length;
+					var tmpScore = '';
+					
+					for(var i=0; i<digit; i++){
+						tmpScore += ($('#currentscore img:eq(' + i + ')', $('#gamePNW .iframe iframe').contents()).attr('alt'));
+					}
+					gameScore = parseInt(tmpScore);
+					break;
+				case 'pacman':
+					gameScore = parseInt($('#score span', $('#gamePNW .iframe iframe').contents()).text());
+					break;
+				case 'bobble':
+					gameScore = parseInt($('#score span', $('#gamePNW .iframe iframe').contents()).text());
+					break;
+				case 'sudoku':
+					gameScore = parseInt($('#score span', $('#gamePNW .iframe iframe').contents()).text());
+					break;
+				case 'trexrunner':
+					gameScore = parseInt($('body a#ctrl_up', $('#gamePNW .iframe iframe').contents()).attr('alt'));
+					break;
+				case 'tetris':
+					gameScore = parseInt($('body #canvas', $('#gamePNW .iframe iframe').contents()).attr('alt'));
+					break;
+				case 'twodots':
+					gameScore = parseInt($('div#score', $('#gamePNW .iframe iframe').contents()).text());
+					break;
+			}
+			
+			gameScore = (isNaN(gameScore) ? 0 : gameScore);
+			
+			var DATA = JSON.parse(STORAGE.getItem('data'));
+				
+			ajaxData = {
+				'usr' : DATA.profile.username,
+				'state' : DATA.profile.state,
+				'ctn' : DATA.profile.contact,
+				'game' : gameName,
+				'score' : gameScore,
+				'pnw' : 1
+			};
+			postAjaxData = "ACT=" + encodeURIComponent('upload_check_score')
+						 + "&DATA=" + encodeURIComponent(sys.serialize(ajaxData));
+					  
+			$.ajax({
+				type: 'POST',
+				url: 'http://wooho.fun/',
+				data: postAjaxData,
+				beforeSend: function(){
+					apps.dialog.preloader();
+				},
+				success: function(str){
+					window.clearInterval(gamePnwInterval);
+					
+					var champion = JSON.parse(str), x = '';
+					
+					apps.dialog.close();
+					
+					x = '<div class="list"><ul>';
+					for(var i=0; i<champion.day1.length; i++){
+						x += '<li><div class="item-content">';
+						x += '<div class="item-media"><img src="img/state/' + champion.day1[i].user_state + '.png" width="24" height="24"/></div>';
+						x += '<div class="item-inner"><div class="item-title">' + champion.day1[i].user_id + '</div>';
+						x += '<div class="item-after">' + champion.day1[i].score + '</div></div>';
+						x += '</div></li>';
+					}
+					x += '</ul></div>';
+					$('#scoreDay').html(x);
+					
+					x = '<div class="list"><ul>';
+					for(var i=0; i<champion.day7.length; i++){
+						x += '<li><div class="item-content">';
+						x += '<div class="item-media"><img src="img/state/' + champion.day7[i].user_state + '.png" width="24" height="24"/></div>';
+						x += '<div class="item-inner"><div class="item-title">' + champion.day7[i].user_id + '</div>';
+						x += '<div class="item-after">' + champion.day7[i].score + '</div></div>';
+						x += '</div></li>';
+					}
+					x += '</ul></div>';
+					$('#scoreWeek').html(x);
+					
+					x = '<div class="list"><ul>';
+					for(var i=0; i<champion.day30.length; i++){
+						x += '<li><div class="item-content">';
+						x += '<div class="item-media"><img src="img/state/' + champion.day30[i].user_state + '.png" width="24" height="24"/></div>';
+						x += '<div class="item-inner"><div class="item-title">' + champion.day30[i].user_id + '</div>';
+						x += '<div class="item-after">' + champion.day30[i].score + '</div></div>';
+						x += '</div></li>';
+					}
+					x += '</ul></div>';
+					$('#scoreMonth').html(x);
+					
+					x = '<div class="list"><ul>';
+					for(var i=0; i<champion.pnw.length; i++){
+						x += '<li><div class="item-content">';
+						x += '<div class="item-media"><img src="img/state/' + champion.pnw[i].user_state + '.png" width="24" height="24"/></div>';
+						x += '<div class="item-inner"><div class="item-title">' + champion.pnw[i].user_id + '</div>';
+						x += '<div class="item-after">' + champion.pnw[i].score + '</div></div>';
+						x += '</div></li>';
+					}
+					x += '</ul></div>';
+					$('#scorePNW').html(x);
+					
+					apps.popover.open('.popover-leaderboard');
+					$('a[href="#scorePNW"]')[0].click();
+					
+					window.clearInterval(gameInterval);
+					$('#gamePNW .page .login-screen-content').css('background-color', '#fff');
+					$('#gamePNW .iframe iframe').remove();
+					
+					apps.loginScreen.close($('#gamePNW'), true);
+					
+					if(typeof admob !== 'undefined'){
+						admob.banner.show();
+					}
+				}
+			});
+		});
+	});
+	
+	$('#gamePNW .navbar .link.replay').on('click', function(){
+		apps.dialog.confirm(msgRestart[JSON.parse(STORAGE.getItem('data')).configuration.language], '', function(){
+			var gameName = $('#gamePNW .iframe iframe').attr('id'),
+				gameScore = 0;
+				
+			switch(gameName){
+				case '2048':
+					gameScore = parseInt($('span#score', $('#gamePNW .iframe iframe').contents()).text());
+					break;
+				case 'flappy':
+					var digit = $('#currentscore img', $('#gamePNW .iframe iframe').contents()).length;
+					var tmpScore = '';
+					
+					for(var i=0; i<digit; i++){
+						tmpScore += ($('#currentscore img:eq(' + i + ')', $('#gamePNW .iframe iframe').contents()).attr('alt'));
+					}
+					gameScore = parseInt(tmpScore);
+					break;
+				case 'pacman':
+					gameScore = parseInt($('#score span', $('#gamePNW .iframe iframe').contents()).text());
+					break;
+				case 'bobble':
+					gameScore = parseInt($('#score span', $('#gamePNW .iframe iframe').contents()).text());
+					break;
+				case 'sudoku':
+					gameScore = parseInt($('#score span', $('#gamePNW .iframe iframe').contents()).text());
+					break;
+				case 'trexrunner':
+					gameScore = parseInt($('body a#ctrl_up', $('#gamePNW .iframe iframe').contents()).attr('alt'));
+					break;
+				case 'tetris':
+					gameScore = parseInt($('body #canvas', $('#gamePNW .iframe iframe').contents()).attr('alt'));
+					break;
+				case 'twodots':
+					gameScore = parseInt($('div#score', $('#gamePNW .iframe iframe').contents()).text());
+					break;
+			}
+			
+			gameScore = (isNaN(gameScore) ? 0 : gameScore);
+			
+			var DATA = JSON.parse(STORAGE.getItem('data'));
+			
+			ajaxData = {
+				'usr' : DATA.profile.username,
+				'state' : DATA.profile.state,
+				'ctn' : DATA.profile.contact,
+				'game' : gameName,
+				'score' : gameScore,
+				'pnw' : 1
+			};
+			postAjaxData = "ACT=" + encodeURIComponent('upload_score')
+						 + "&DATA=" + encodeURIComponent(sys.serialize(ajaxData));
+					  
+			$.ajax({
+				type: 'POST',
+				url: 'http://wooho.fun/',
+				data: postAjaxData,
+				beforeSend: function(){
+					apps.dialog.preloader();
+				},
+				success: function(str){
+					apps.dialog.close();
+					
+					$('#gamePNW .iframe iframe')[0].contentDocument.location.href = $('#gamePNW .iframe iframe')[0].contentDocument.location.href;
+				}
+			});
+		});
+	});
+	
 	// Game Page
 	
 	$('#game .navbar .link.back').on('click', function(){
@@ -531,10 +790,13 @@ $(document).ready(function(){
 				gameScore = parseInt($('span#score', $('#game .iframe iframe').contents()).text());
 				break;
 			case 'flappy':
-				gameScore = parseInt($('#currentscore img', $('#game .iframe iframe').contents()).attr('alt'));
-				break;
-			case 'mario':
-				gameScore = parseInt($('#data_display td.indisplay:eq(0)', $('#game .iframe iframe').contents()).text().substring(5));
+				var digit = $('#currentscore img', $('#game .iframe iframe').contents()).length;
+				var tmpScore = '';
+				
+				for(var i=0; i<digit; i++){
+					tmpScore += ($('#currentscore img:eq(' + i + ')', $('#game .iframe iframe').contents()).attr('alt'));
+				}
+				gameScore = parseInt(tmpScore);
 				break;
 			case 'pacman':
 				gameScore = parseInt($('#score span', $('#game .iframe iframe').contents()).text());
@@ -563,6 +825,7 @@ $(document).ready(function(){
 		ajaxData = {
 			'usr' : DATA.profile.username,
 			'state' : DATA.profile.state,
+			'ctn' : DATA.profile.contact,
 			'game' : gameName,
 			'score' : gameScore
 		};
@@ -615,6 +878,7 @@ $(document).ready(function(){
 				$('#scoreMonth').html(x);
 				
 				apps.popover.open('.popover-leaderboard');
+				$('a[href="#scoreDay"]')[0].click();
 				
 				window.clearInterval(gameInterval);
 				$('#game .page .login-screen-content').css('background-color', '#fff');
@@ -623,7 +887,7 @@ $(document).ready(function(){
 				apps.loginScreen.close($('#game'), true);
 				apps.loginScreen.open($('#ptc'), true);
 				
-				if(admob){
+				if(typeof admob !== 'undefined'){
 					admob.banner.show();
 				}
 			}
@@ -640,10 +904,13 @@ $(document).ready(function(){
 					gameScore = parseInt($('span#score', $('#game .iframe iframe').contents()).text());
 					break;
 				case 'flappy':
-					gameScore = parseInt($('#currentscore img', $('#game .iframe iframe').contents()).attr('alt'));
-					break;
-				case 'mario':
-					gameScore = parseInt($('#data_display td.indisplay:eq(0)', $('#game .iframe iframe').contents()).text().substring(5));
+					var digit = $('#currentscore img', $('#game .iframe iframe').contents()).length;
+					var tmpScore = '';
+					
+					for(var i=0; i<digit; i++){
+						tmpScore += ($('#currentscore img:eq(' + i + ')', $('#game .iframe iframe').contents()).attr('alt'));
+					}
+					gameScore = parseInt(tmpScore);
 					break;
 				case 'pacman':
 					gameScore = parseInt($('#score span', $('#game .iframe iframe').contents()).text());
@@ -672,6 +939,7 @@ $(document).ready(function(){
 			ajaxData = {
 				'usr' : DATA.profile.username,
 				'state' : DATA.profile.state,
+				'ctn' : DATA.profile.contact,
 				'game' : gameName,
 				'score' : gameScore
 			};
@@ -688,7 +956,7 @@ $(document).ready(function(){
 				success: function(str){
 					apps.dialog.close();
 					
-					if(interstitialReady && (gameTimer % 4 == 2)){
+					if(interstitialReady && (gameTimer % 2 == 0)){
 						admob.interstitial.show();
 					}else{
 						sys.replayGame();
@@ -701,11 +969,43 @@ $(document).ready(function(){
 	// Play and Win Page
 	
 	$('.btn-pnw').on('click', function(){
-		
+		apps.loginScreen.open($('#pnw'), true);
 	});
 	
 	$('#pnw .navbar .link.back').on('click', function(){
 		apps.loginScreen.close($('#pnw'), true);
+	});
+	
+	$('.btn-pnw-tzf').on('click', function(){
+		sys.generateGame('tzfe', 'pnw');
+	});
+	
+	$('.btn-pnw-fpb').on('click', function(){
+		sys.generateGame('flappy', 'pnw');
+	});
+	
+	$('.btn-pnw-pcm').on('click', function(){
+		sys.generateGame('pacman', 'pnw');
+	});
+	
+	$('.btn-pnw-pbb').on('click', function(){
+		sys.generateGame('bobble', 'pnw');
+	});
+	
+	$('.btn-pnw-sdk').on('click', function(){
+		sys.generateGame('sudoku', 'pnw');
+	});
+	
+	$('.btn-pnw-trr').on('click', function(){
+		sys.generateGame('trex', 'pnw');
+	});
+	
+	$('.btn-pnw-tts').on('click', function(){
+		sys.generateGame('tetris', 'pnw');
+	});
+	
+	$('.btn-pnw-tdt').on('click', function(){
+		sys.generateGame('twodots', 'pnw');
 	});
 	
 	// Practice Page
@@ -719,361 +1019,35 @@ $(document).ready(function(){
 	});
 	
 	$('.btn-ptc-tzf').on('click', function(){
-		apps.dialog.confirm((msgPracticeConfirm[JSON.parse(STORAGE.getItem('data')).configuration.language]), '', function () {
-			if(c(STORAGE.getItem('data'))){
-				var DATA = JSON.parse(STORAGE.getItem('data'));
-				var curCoin = b(Object.keys(DATA.coin)[1]);
-				
-				if(curCoin<1){
-					apps.dialog.close();
-					apps.dialog.alert((msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]), '');
-					apps.loginScreen.close($('#ptc'), true);
-				}else{
-					apps.dialog.preloader();
-					curCoin--;
-					var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
-					
-					DATA.coin = {};
-					DATA.coin[T] = F;
-					DATA.coin[S] = K;
-					DATA.coin[J] = Q;
-					DATA.coin[E] = G;
-					STORAGE.setItem('data', JSON.stringify(DATA));
-					
-					$('#wooho-coin').find('.fab-text').text(Q);
-			
-					apps.loginScreen.close($('#ptc'), true);
-					$('#game .navbar').find('.title').text('2048');
-					$('#game .page .login-screen-content').css('background-color', '#F0F0D8');
-					apps.loginScreen.open($('#game'), true);
-					$('#game .iframe iframe').remove();
-					$('#game .iframe').append('<iframe id="2048" src="games/2048/index.html" scrolling="no" width="550" height="650" allowfullscreen="true" onload="sys.onLoadHandler(\'tzfe\');"></iframe>');
-				}
-			}else{
-				STORAGE.removeItem('data');
-				location.reload();
-			}
-		});
+		sys.generateGame('tzfe', 'ptc');
 	});
 	
 	$('.btn-ptc-fpb').on('click', function(){
-		apps.dialog.confirm((msgPracticeConfirm[JSON.parse(STORAGE.getItem('data')).configuration.language]), '', function () {
-			if(c(STORAGE.getItem('data'))){
-				var DATA = JSON.parse(STORAGE.getItem('data'));
-				var curCoin = b(Object.keys(DATA.coin)[1]);
-				
-				if(curCoin<1){
-					apps.dialog.close();
-					apps.dialog.alert((msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]), '');
-					apps.loginScreen.close($('#ptc'), true);
-				}else{
-					apps.dialog.preloader();
-					curCoin--;
-					var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
-					
-					DATA.coin = {};
-					DATA.coin[T] = F;
-					DATA.coin[S] = K;
-					DATA.coin[J] = Q;
-					DATA.coin[E] = G;
-					STORAGE.setItem('data', JSON.stringify(DATA));
-					
-					$('#wooho-coin').find('.fab-text').text(Q);
-			
-					apps.loginScreen.close($('#ptc'), true);
-					$('#game .navbar').find('.title').text('Flappy Bird');
-					$('#game .page .login-screen-content').css('background-color', '#DED895');
-					apps.loginScreen.open($('#game'), true);
-					
-					gameTimer = 0;
-					$('#game .iframe iframe').remove();
-					$('#game .iframe').append('<iframe id="flappy" src="games/flappybird/index.html" scrolling="no" width="500" height="550" allowfullscreen="true" onload="sys.onLoadHandler(\'flappy\');"></iframe>');
-				}
-			}else{
-				STORAGE.removeItem('data');
-				location.reload();
-			}
-		});
-	});
-	
-	$('.btn-ptc-mro').on('click', function(){
-		apps.dialog.confirm((msgPracticeConfirm[JSON.parse(STORAGE.getItem('data')).configuration.language]), '', function () {
-			if(c(STORAGE.getItem('data'))){
-				var DATA = JSON.parse(STORAGE.getItem('data'));
-				var curCoin = b(Object.keys(DATA.coin)[1]);
-				
-				if(curCoin<1){
-					apps.dialog.close();
-					apps.dialog.alert((msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]), '');
-					apps.loginScreen.close($('#ptc'), true);
-				}else{
-					apps.dialog.preloader();
-					curCoin--;
-					var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
-					
-					DATA.coin = {};
-					DATA.coin[T] = F;
-					DATA.coin[S] = K;
-					DATA.coin[J] = Q;
-					DATA.coin[E] = G;
-					STORAGE.setItem('data', JSON.stringify(DATA));
-					
-					$('#wooho-coin').find('.fab-text').text(Q);
-			
-					apps.loginScreen.close($('#ptc'), true);
-					$('#game .navbar').find('.title').text('Mario');
-					$('#game .page .login-screen-content').css('background-color', '#000000');
-					apps.loginScreen.open($('#game'), true);
-
-					gameTimer = 0;
-					$('#game .iframe iframe').remove();
-					$('#game .iframe').append('<iframe id="mario" src="games/mario/index.html" scrolling="no" width="500" height="580" allowfullscreen="true" onload="sys.onLoadHandler(\'mario\');"></iframe>');
-				}
-			}else{
-				STORAGE.removeItem('data');
-				location.reload();
-			}
-		});
+		sys.generateGame('flappy', 'ptc');
 	});
 	
 	$('.btn-ptc-pcm').on('click', function(){
-		apps.dialog.confirm((msgPracticeConfirm[JSON.parse(STORAGE.getItem('data')).configuration.language]), '', function () {
-			if(c(STORAGE.getItem('data'))){
-				var DATA = JSON.parse(STORAGE.getItem('data'));
-				var curCoin = b(Object.keys(DATA.coin)[1]);
-				
-				if(curCoin<1){
-					apps.dialog.close();
-					apps.dialog.alert((msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]), '');
-					apps.loginScreen.close($('#ptc'), true);
-				}else{
-					apps.dialog.preloader();
-					curCoin--;
-					var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
-					
-					DATA.coin = {};
-					DATA.coin[T] = F;
-					DATA.coin[S] = K;
-					DATA.coin[J] = Q;
-					DATA.coin[E] = G;
-					STORAGE.setItem('data', JSON.stringify(DATA));
-					
-					$('#wooho-coin').find('.fab-text').text(Q);
-			
-					apps.loginScreen.close($('#ptc'), true);
-					$('#game .navbar').find('.title').text('Pac Man');
-					$('#game .page .login-screen-content').css('background-color', '#000');
-					apps.loginScreen.open($('#game'), true);
-
-					gameTimer = 0;
-					$('#game .iframe iframe').remove();
-					$('#game .iframe').append('<iframe id="pacman" src="games/pacman/index.html" scrolling="no" width="350" height="420" allowfullscreen="true" onload="sys.onLoadHandler(\'pacman\');"></iframe>');
-				}
-			}else{
-				STORAGE.removeItem('data');
-				location.reload();
-			}
-		});
+		sys.generateGame('pacman', 'ptc');
 	});
 	
 	$('.btn-ptc-pbb').on('click', function(){
-		apps.dialog.confirm((msgPracticeConfirm[JSON.parse(STORAGE.getItem('data')).configuration.language]), '', function () {
-			if(c(STORAGE.getItem('data'))){
-				var DATA = JSON.parse(STORAGE.getItem('data'));
-				var curCoin = b(Object.keys(DATA.coin)[1]);
-				
-				if(curCoin<1){
-					apps.dialog.close();
-					apps.dialog.alert((msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]), '');
-					apps.loginScreen.close($('#ptc'), true);
-				}else{
-					apps.dialog.preloader();
-					curCoin--;
-					var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
-					
-					DATA.coin = {};
-					DATA.coin[T] = F;
-					DATA.coin[S] = K;
-					DATA.coin[J] = Q;
-					DATA.coin[E] = G;
-					STORAGE.setItem('data', JSON.stringify(DATA));
-					
-					$('#wooho-coin').find('.fab-text').text(Q);
-			
-					apps.loginScreen.close($('#ptc'), true);
-					$('#game .navbar').find('.title').text('Puzzle Bobble');
-					$('#game .page .login-screen-content').css('background-color', '#444444');
-					apps.loginScreen.open($('#game'), true);
-
-					gameTimer = 0;
-					$('#game .iframe iframe').remove();
-					$('#game .iframe').append('<iframe id="bobble" src="games/bobble/index.html" scrolling="no" width="500" height="800" allowfullscreen="true" onload="sys.onLoadHandler(\'bobble\');"></iframe>');
-				}
-			}else{
-				STORAGE.removeItem('data');
-				location.reload();
-			}
-		});
+		sys.generateGame('bobble', 'ptc');
 	});
 	
 	$('.btn-ptc-sdk').on('click', function(){
-		apps.dialog.confirm((msgPracticeConfirm[JSON.parse(STORAGE.getItem('data')).configuration.language]), '', function () {
-			if(c(STORAGE.getItem('data'))){
-				var DATA = JSON.parse(STORAGE.getItem('data'));
-				var curCoin = b(Object.keys(DATA.coin)[1]);
-				
-				if(curCoin<1){
-					apps.dialog.close();
-					apps.dialog.alert((msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]), '');
-					apps.loginScreen.close($('#ptc'), true);
-				}else{
-					apps.dialog.preloader();
-					curCoin--;
-					var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
-					
-					DATA.coin = {};
-					DATA.coin[T] = F;
-					DATA.coin[S] = K;
-					DATA.coin[J] = Q;
-					DATA.coin[E] = G;
-					STORAGE.setItem('data', JSON.stringify(DATA));
-					
-					$('#wooho-coin').find('.fab-text').text(Q);
-			
-					apps.loginScreen.close($('#ptc'), true);
-					$('#game .navbar').find('.title').text('Sudoku');
-					$('#game .page .login-screen-content').css('background-color', '#fff');
-					apps.loginScreen.open($('#game'), true);
-
-					gameTimer = 0;
-					$('#game .iframe iframe').remove();
-					$('#game .iframe').append('<iframe id="sudoku" src="games/sudoku/index.html" scrolling="no" width="450" height="500" allowfullscreen="true" onload="sys.onLoadHandler(\'sudoku\');"></iframe>');
-				}
-			}else{
-				STORAGE.removeItem('data');
-				location.reload();
-			}
-		});
+		sys.generateGame('sudoku', 'ptc');
 	});
 	
 	$('.btn-ptc-trr').on('click', function(){
-		apps.dialog.confirm((msgPracticeConfirm[JSON.parse(STORAGE.getItem('data')).configuration.language]), '', function () {
-			if(c(STORAGE.getItem('data'))){
-				var DATA = JSON.parse(STORAGE.getItem('data'));
-				var curCoin = b(Object.keys(DATA.coin)[1]);
-				
-				if(curCoin<1){
-					apps.dialog.close();
-					apps.dialog.alert((msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]), '');
-					apps.loginScreen.close($('#ptc'), true);
-				}else{
-					apps.dialog.preloader();
-					curCoin--;
-					var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
-					
-					DATA.coin = {};
-					DATA.coin[T] = F;
-					DATA.coin[S] = K;
-					DATA.coin[J] = Q;
-					DATA.coin[E] = G;
-					STORAGE.setItem('data', JSON.stringify(DATA));
-					
-					$('#wooho-coin').find('.fab-text').text(Q);
-			
-					apps.loginScreen.close($('#ptc'), true);
-					$('#game .navbar').find('.title').text('T-Rex Runner');
-					$('#game .page .login-screen-content').css('background-color', '#fff');
-					apps.loginScreen.open($('#game'), true);
-
-					gameTimer = 0;
-					$('#game .iframe iframe').remove();
-					$('#game .iframe').append('<iframe id="trexrunner" src="games/trexrunner/index.html" scrolling="no" width="500" height="350" allowfullscreen="true" onload="sys.onLoadHandler(\'trex\');"></iframe>');
-				}
-			}else{
-				STORAGE.removeItem('data');
-				location.reload();
-			}
-		});
+		sys.generateGame('trex', 'ptc');
 	});
 	
 	$('.btn-ptc-tts').on('click', function(){
-		apps.dialog.confirm((msgPracticeConfirm[JSON.parse(STORAGE.getItem('data')).configuration.language]), '', function () {
-			if(c(STORAGE.getItem('data'))){
-				var DATA = JSON.parse(STORAGE.getItem('data'));
-				var curCoin = b(Object.keys(DATA.coin)[1]);
-				
-				if(curCoin<1){
-					apps.dialog.close();
-					apps.dialog.alert((msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]), '');
-					apps.loginScreen.close($('#ptc'), true);
-				}else{
-					apps.dialog.preloader();
-					curCoin--;
-					var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
-					
-					DATA.coin = {};
-					DATA.coin[T] = F;
-					DATA.coin[S] = K;
-					DATA.coin[J] = Q;
-					DATA.coin[E] = G;
-					STORAGE.setItem('data', JSON.stringify(DATA));
-					
-					$('#wooho-coin').find('.fab-text').text(Q);
-					
-					apps.loginScreen.close($('#ptc'), true);
-					$('#game .navbar').find('.title').text('Tetris');
-					$('#game .page .login-screen-content').css('background-color', '#3B2313');
-					apps.loginScreen.open($('#game'), true);
-
-					gameTimer = 0;
-					$('#game .iframe iframe').remove();
-					$('#game .iframe').append('<iframe id="tetris" src="games/tetris/index.html" scrolling="no" width="600" height="800" allowfullscreen="true" onload="sys.onLoadHandler(\'tetris\');"></iframe>');
-				}
-			}else{
-				STORAGE.removeItem('data');
-				location.reload();
-			}
-		});
+		sys.generateGame('tetris', 'ptc');
 	});
 	
 	$('.btn-ptc-tdt').on('click', function(){
-		apps.dialog.confirm((msgPracticeConfirm[JSON.parse(STORAGE.getItem('data')).configuration.language]), '', function () {
-			if(c(STORAGE.getItem('data'))){
-				var DATA = JSON.parse(STORAGE.getItem('data'));
-				var curCoin = b(Object.keys(DATA.coin)[1]);
-				
-				if(curCoin<1){
-					apps.dialog.close();
-					apps.dialog.alert((msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]), '');
-					apps.loginScreen.close($('#ptc'), true);
-				}else{
-					apps.dialog.preloader();
-					curCoin--;
-					var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
-					
-					DATA.coin = {};
-					DATA.coin[T] = F;
-					DATA.coin[S] = K;
-					DATA.coin[J] = Q;
-					DATA.coin[E] = G;
-					STORAGE.setItem('data', JSON.stringify(DATA));
-					
-					$('#wooho-coin').find('.fab-text').text(Q);
-					
-					apps.loginScreen.close($('#ptc'), true);
-					$('#game .navbar').find('.title').text('Two Dots');
-					$('#game .page .login-screen-content').css('background-color', '#FFFFFF');
-					apps.loginScreen.open($('#game'), true);
-
-					gameTimer = 0;
-					$('#game .iframe iframe').remove();
-					$('#game .iframe').append('<iframe id="twodots" src="games/twodots/index.html" scrolling="no" width="500" height="500" allowfullscreen="true" onload="sys.onLoadHandler(\'twodots\');"></iframe>');
-				}
-			}else{
-				STORAGE.removeItem('data');
-				location.reload();
-			}
-		});
+		sys.generateGame('twodots', 'ptc');
 	});
 	
 	// Leaderboard Page
@@ -1115,39 +1089,59 @@ $(document).ready(function(){
 			x = '';
 			
 		x = '<div class="list"><ul>';
-		for(var i=0; i<champion.day1[game].length; i++){
-			x += '<li><div class="item-content">';
-			x += '<div class="item-media"><img src="img/state/' + champion.day1[game][i].user_state + '.png" width="24" height="24"/></div>';
-			x += '<div class="item-inner"><div class="item-title">' + champion.day1[game][i].user_id + '</div>';
-			x += '<div class="item-after">' + champion.day1[game][i].score + '</div></div>';
-			x += '</div></li>';
+		if(champion.day1){
+			for(var i=0; i<champion.day1[game].length; i++){
+				x += '<li><div class="item-content">';
+				x += '<div class="item-media"><img src="img/state/' + champion.day1[game][i].user_state + '.png" width="24" height="24"/></div>';
+				x += '<div class="item-inner"><div class="item-title">' + champion.day1[game][i].user_id + '</div>';
+				x += '<div class="item-after">' + champion.day1[game][i].score + '</div></div>';
+				x += '</div></li>';
+			}
 		}
 		x += '</ul></div>';
 		$('#scoreDay').html(x);
 		
 		x = '<div class="list"><ul>';
-		for(var i=0; i<champion.day7[game].length; i++){
-			x += '<li><div class="item-content">';
-			x += '<div class="item-media"><img src="img/state/' + champion.day7[game][i].user_state + '.png" width="24" height="24"/></div>';
-			x += '<div class="item-inner"><div class="item-title">' + champion.day7[game][i].user_id + '</div>';
-			x += '<div class="item-after">' + champion.day7[game][i].score + '</div></div>';
-			x += '</div></li>';
+		if(champion.day7){
+			for(var i=0; i<champion.day7[game].length; i++){
+				x += '<li><div class="item-content">';
+				x += '<div class="item-media"><img src="img/state/' + champion.day7[game][i].user_state + '.png" width="24" height="24"/></div>';
+				x += '<div class="item-inner"><div class="item-title">' + champion.day7[game][i].user_id + '</div>';
+				x += '<div class="item-after">' + champion.day7[game][i].score + '</div></div>';
+				x += '</div></li>';
+			}
 		}
 		x += '</ul></div>';
 		$('#scoreWeek').html(x);
 		
 		x = '<div class="list"><ul>';
-		for(var i=0; i<champion.day30[game].length; i++){
-			x += '<li><div class="item-content">';
-			x += '<div class="item-media"><img src="img/state/' + champion.day30[game][i].user_state + '.png" width="24" height="24"/></div>';
-			x += '<div class="item-inner"><div class="item-title">' + champion.day30[game][i].user_id + '</div>';
-			x += '<div class="item-after">' + champion.day30[game][i].score + '</div></div>';
-			x += '</div></li>';
+		if(champion.day30){
+			for(var i=0; i<champion.day30[game].length; i++){
+				x += '<li><div class="item-content">';
+				x += '<div class="item-media"><img src="img/state/' + champion.day30[game][i].user_state + '.png" width="24" height="24"/></div>';
+				x += '<div class="item-inner"><div class="item-title">' + champion.day30[game][i].user_id + '</div>';
+				x += '<div class="item-after">' + champion.day30[game][i].score + '</div></div>';
+				x += '</div></li>';
+			}
 		}
 		x += '</ul></div>';
 		$('#scoreMonth').html(x);
 		
+		x = '<div class="list"><ul>';
+		if(champion.pnw){
+			for(var i=0; i<champion.pnw[game].length; i++){
+				x += '<li><div class="item-content">';
+				x += '<div class="item-media"><img src="img/state/' + champion.pnw[game][i].user_state + '.png" width="24" height="24"/></div>';
+				x += '<div class="item-inner"><div class="item-title">' + champion.pnw[game][i].user_id + '</div>';
+				x += '<div class="item-after">' + champion.pnw[game][i].score + '</div></div>';
+				x += '</div></li>';
+			}
+		}
+		x += '</ul></div>';
+		$('#scorePNW').html(x);
+		
 		apps.popover.open('.popover-leaderboard');
+		$('a[href="#scoreDay"]')[0].click();
 	});
 	
 	// Earn Credit
@@ -1425,254 +1419,811 @@ sys = {
 			navigator.app.exitApp();
 		}
 	},
-	'onLoadHandler' : function(game){
-		switch(game){
-			case 'tzfe':
-				var w = window.innerWidth,
-					h = window.innerHeight;
-				var sizeW = (w/550),
-					sizeH = (h/(650+56));
+	'generateGame': function(game, mode){
+		if(mode == "pnw"){
+			var gameTitle = '', gameBgColor = '', gameIframe = '';
+			
+			switch(game){
+				case 'tzfe':
+					gameTitle = '2048';
+					gameBgColor = '#F0F0D8';
+					gameIframe = '<iframe id="2048" src="games/2048/index.html" scrolling="no" width="550" height="650" allowfullscreen="true" onload="sys.onLoadHandler(\'tzfe\', \'pnw\');"></iframe>';
+					break;
+				case 'flappy':
+					gameTitle = 'Flappy Bird';
+					gameBgColor = '#DED895';
+					gameIframe = '<iframe id="flappy" src="games/flappybird/index.html" scrolling="no" width="500" height="550" allowfullscreen="true" onload="sys.onLoadHandler(\'flappy\', \'pnw\');"></iframe>';
+					break;
+				case 'pacman':
+					gameTitle = 'Pac Man';
+					gameBgColor = '#000000';
+					gameIframe = '<iframe id="pacman" src="games/pacman/index.html" scrolling="no" width="350" height="420" allowfullscreen="true" onload="sys.onLoadHandler(\'pacman\', \'pnw\');"></iframe>';
+					break;
+				case 'bobble':
+					gameTitle = 'Puzzle Bobble';
+					gameBgColor = '#444444';
+					gameIframe = '<iframe id="bobble" src="games/bobble/index.html" scrolling="no" width="500" height="800" allowfullscreen="true" onload="sys.onLoadHandler(\'bobble\', \'pnw\');"></iframe>';
+					break;
+				case 'sudoku':
+					gameTitle = 'Sudoku';
+					gameBgColor = '#FFFFFF';
+					gameIframe = '<iframe id="sudoku" src="games/sudoku/index.html" scrolling="no" width="450" height="500" allowfullscreen="true" onload="sys.onLoadHandler(\'sudoku\', \'pnw\');"></iframe>';
+					break;
+				case 'trex':
+					gameTitle = 'T-Rex Runner';
+					gameBgColor = '#FFFFFF';
+					gameIframe = '<iframe id="trexrunner" src="games/trexrunner/index.html" scrolling="no" width="500" height="350" allowfullscreen="true" onload="sys.onLoadHandler(\'trex\', \'pnw\');"></iframe>';
+					break;
+				case 'tetris':
+					gameTitle = 'Tetris';
+					gameBgColor = '#3B2313';
+					gameIframe = '<iframe id="tetris" src="games/tetris/index.html" scrolling="no" width="600" height="800" allowfullscreen="true" onload="sys.onLoadHandler(\'tetris\', \'pnw\');"></iframe>';
+					break;
+				case 'twodots':
+					gameTitle = 'Two Dots';
+					gameBgColor = '#FFFFFF';
+					gameIframe = '<iframe id="twodots" src="games/twodots/index.html" scrolling="no" width="500" height="500" allowfullscreen="true" onload="sys.onLoadHandler(\'twodots\', \'pnw\');"></iframe>';
+					break;
+			}
+			
+			apps.dialog.confirm((msgPnwConfirm[JSON.parse(STORAGE.getItem('data')).configuration.language]), '', function(){
+				if(c(STORAGE.getItem('data'))){
+					var DATA = JSON.parse(STORAGE.getItem('data'));
+					var curCoin = b(Object.keys(DATA.coin)[1]);
 					
-				if(sizeW < sizeH){
-					$('#game iframe').css('transform', 'scale(' + sizeW + ')');
-					$('#game iframe').css('top', ((((sizeW*650)-650)/2)+56+'px'));
-					$('#game iframe').css('left', ((((sizeW*550)-550)/2)+'px'));
-				}else{
-					$('#game iframe').css('transform', 'scale(' + sizeH + ')');
-					$('#game iframe').css('top', ((((sizeH*650)-650)/2)+56+'px'));
-					$('#game iframe').css('left', ((((sizeH*550)-550)/2)+'px'));
-				}
-				
-				if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
-					$('#sound', $('#game .iframe iframe').contents()).remove();
-				}
-				break;
-				
-			case 'flappy':
-				var w = window.innerWidth,
-					h = window.innerHeight;
-				var sizeW = (w/500),
-					sizeH = (h/(550+56));
-					
-				if(sizeW < sizeH){
-					$('#game iframe').css('transform', 'scale(' + sizeW + ')');
-					$('#game iframe').css('top', ((((sizeW*550)-550)/2)+56+'px'));
-					$('#game iframe').css('left', ((((sizeW*500)-500)/2)+'px'));
-				}else{
-					$('#game iframe').css('transform', 'scale(' + sizeH + ')');
-					$('#game iframe').css('top', ((((sizeH*550)-550)/2)+56+'px'));
-					$('#game iframe').css('left', ((((sizeH*500)-500)/2)+'px'));
-				}
-				
-				if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
-					$('#game iframe')[0].contentWindow.buzz.all().setVolume(0);
-				}
-				break;
-				
-			case 'mario':
-				var w = window.innerWidth,
-					h = window.innerHeight;
-				var sizeW = (w/500),
-					sizeH = (h/(580+56));
-					
-				if(sizeW < sizeH){
-					$('#game iframe').css('transform', 'scale(' + sizeW + ')');
-					$('#game iframe').css('top', ((((sizeW*580)-580)/2)+56+'px'));
-					$('#game iframe').css('left', ((((sizeW*500)-500)/2)+'px'));
-				}else{
-					$('#game iframe').css('transform', 'scale(' + sizeH + ')');
-					$('#game iframe').css('top', ((((sizeH*580)-580)/2)+56+'px'));
-					$('#game iframe').css('left', ((((sizeH*500)-500)/2)+'px'));
-				}
-				break;
-				
-			case 'pacman':
-				var w = window.innerWidth,
-					h = window.innerHeight;
-				var sizeW = (w/350),
-					sizeH = (h/(420+56));
-					
-				if(sizeW < sizeH){
-					$('#game iframe').css('transform', 'scale(' + sizeW + ')');
-					$('#game iframe').css('top', ((((sizeW*420)-420)/2)+56+'px'));
-					$('#game iframe').css('left', ((((sizeW*350)-350)/2)+'px'));
-				}else{
-					$('#game iframe').css('transform', 'scale(' + sizeH + ')');
-					$('#game iframe').css('top', ((((sizeH*420)-420)/2)+56+'px'));
-					$('#game iframe').css('left', ((((sizeH*350)-350)/2)+'px'));
-				}
-				
-				if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
-					$('#game iframe')[0].contentWindow.GROUP_SOUND.mute();
-				}
-				break;
-				
-			case 'bobble':
-				var w = window.innerWidth,
-					h = window.innerHeight;
-				var sizeW = (w/500),
-					sizeH = (h/(800+56));
-					
-				console.log('w = ' + w + ', h = ' + h + ', sizeW' + sizeW + ', sizeH' + sizeH);
-				if(sizeW < sizeH){
-					$('#game iframe').css('transform', 'scale(' + sizeW + ')');
-					$('#game iframe').css('top', ((((sizeW*800)-800)/2)+56+'px'));
-					$('#game iframe').css('left', ((((sizeW*500)-500)/2)+'px'));
-				}else{
-					$('#game iframe').css('transform', 'scale(' + sizeH + ')');
-					$('#game iframe').css('top', ((((sizeH*800)-800)/2)+56+'px'));
-					$('#game iframe').css('left', ((((sizeH*500)-500)/2)+'px'));
-				}
-				
-				if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
-					$('#sound', $('#game .iframe iframe').contents()).remove();
-				}
-				break;
-				
-			case 'sudoku':
-				var w = window.innerWidth,
-					h = window.innerHeight;
-				var sizeW = (w/450),
-					sizeH = (h/(500+56));
-					
-				if(sizeW < sizeH){
-					$('#game iframe').css('transform', 'scale(' + sizeW + ')');
-					$('#game iframe').css('top', ((((sizeW*500)-500)/2)+56+'px'));
-					$('#game iframe').css('left', ((((sizeW*450)-450)/2)+'px'));
-				}else{
-					$('#game iframe').css('transform', 'scale(' + sizeH + ')');
-					$('#game iframe').css('top', ((((sizeH*500)-500)/2)+56+'px'));
-					$('#game iframe').css('left', ((((sizeH*450)-450)/2)+'px'));
-				}
-				
-				if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
-					$('#sound', $('#game .iframe iframe').contents()).remove();
-				}
-				break;
-				
-			case 'trex':
-				var w = window.innerWidth,
-					h = window.innerHeight;
-				var sizeW = (w/500),
-					sizeH = (h/(350+56));
-					
-				if(sizeW < sizeH){
-					$('#game iframe').css('transform', 'scale(' + sizeW + ')');
-					$('#game iframe').css('top', ((((sizeW*350)-350)/2)+56+'px'));
-					$('#game iframe').css('left', ((((sizeW*500)-500)/2)+'px'));
-				}else{
-					$('#game iframe').css('transform', 'scale(' + sizeH + ')');
-					$('#game iframe').css('top', ((((sizeH*350)-350)/2)+56+'px'));
-					$('#game iframe').css('left', ((((sizeH*500)-500)/2)+'px'));
-				}
-				if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
-					$('#audio-resources', $('#game .iframe iframe').contents()).remove();
-				}
-				break;
-				
-			case 'tetris':
-				var w = window.innerWidth,
-					h = window.innerHeight;
-				var sizeW = (w/600),
-					sizeH = (h/(800+56));
-					
-				if(sizeW < sizeH){
-					$('#game iframe').css('transform', 'scale(' + sizeW + ')');
-					$('#game iframe').css('top', ((((sizeW*800)-800)/2)+56+'px'));
-					$('#game iframe').css('left', ((((sizeW*600)-600)/2)+'px'));
-				}else{
-					$('#game iframe').css('transform', 'scale(' + sizeH + ')');
-					$('#game iframe').css('top', ((((sizeH*800)-800)/2)+56+'px'));
-					$('#game iframe').css('left', ((((sizeH*600)-600)/2)+'px'));
-				}
-				if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
-					$('#woohoSound', $('#game .iframe iframe').contents()).remove();
-				}
-				break;
-				
-			case 'twodots':
-				var w = window.innerWidth,
-					h = window.innerHeight;
-				var sizeW = (w/500),
-					sizeH = (h/(500+56));
-					
-				if(sizeW < sizeH){
-					$('#game iframe').css('transform', 'scale(' + sizeW + ')');
-					$('#game iframe').css('top', ((((sizeW*500)-500)/2)+56+'px'));
-					$('#game iframe').css('left', ((((sizeW*500)-500)/2)+'px'));
-				}else{
-					$('#game iframe').css('transform', 'scale(' + sizeH + ')');
-					$('#game iframe').css('top', ((((sizeH*500)-500)/2)+56+'px'));
-					$('#game iframe').css('left', ((((sizeH*500)-500)/2)+'px'));
-				}
-				if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
-					$('#sound', $('#game .iframe iframe').contents()).remove();
-				}
-				break;
-		}
-		
-		if(gameTimer == 0){
-			gameInterval = window.setInterval(function(){
-				gameTimer++;
-				
-				if(gameTimer>59){
-					if(c(STORAGE.getItem('data'))){
-						var DATA = JSON.parse(STORAGE.getItem('data'));
-						var curCoin = b(Object.keys(DATA.coin)[1]);
-						
-						if(curCoin<1){
-							if(!inEarnAd){
-								inEarnAd = true;
-							
-								apps.dialog.create({
-									title : '',
-									text : (msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]),
-									closeByBackdropClick: false,
-									buttons: [
-										{
-											text: (msgNotEnoughEarn[JSON.parse(STORAGE.getItem('data')).configuration.language]),
-										},{
-											text: (msgNotEnoughExit[JSON.parse(STORAGE.getItem('data')).configuration.language]),
-										}
-									],
-									onClick: function(e, num){
-										if(num == 0){
-											if(rewardReady){
-												admob.rewardvideo.show();
-												inEarnAd = true;
-											}else{
-												inEarnAd = false;
-											}
-										}else{
-											$('#game .navbar .link.back').click();
-											gameTimer = 0;
-											inEarnAd = false;
-										}
-									}
-								}).open();
-							}
-						}else{
-							curCoin--;
-							var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
-							
-							DATA.coin = {};
-							DATA.coin[T] = F;
-							DATA.coin[S] = K;
-							DATA.coin[J] = Q;
-							DATA.coin[E] = G;
-							STORAGE.setItem('data', JSON.stringify(DATA));
-							
-							$('#wooho-coin').find('.fab-text').text(Q);
-							gameTimer = 0;
-						}
+					if(curCoin<50){
+						apps.dialog.close();
+						apps.dialog.alert((msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]), '');
+						apps.loginScreen.close($('#pnw'), true);
 					}else{
-						STORAGE.removeItem('data');
-						location.reload();
+						apps.dialog.preloader();
+						curCoin-=50;
+						var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
+						
+						DATA.coin = {};
+						DATA.coin[T] = F;
+						DATA.coin[S] = K;
+						DATA.coin[J] = Q;
+						DATA.coin[E] = G;
+						STORAGE.setItem('data', JSON.stringify(DATA));
+						
+						$('#wooho-coin').find('.fab-text').text(Q);
+				
+						apps.loginScreen.close($('#pnw'), true);
+						gamePnwTimer = 305;
+						$('#gamePNW .navbar').find('.title').text(gameTitle);
+						$('#gamePNW .page .login-screen-content').css('background-color', gameBgColor);
+						apps.loginScreen.open($('#gamePNW'), true);
+						$('#gamePNW .iframe iframe').remove();
+						$('#gamePNW .iframe').append(gameIframe);
 					}
+				}else{
+					apps.toast.create({
+						icon: '<i class="material-icons">bug_report</i>',
+						text: 'Coin error detected!',
+						position: 'center',
+						closeTimeout: 1000,
+					}).open();
+					
+					var DATA = JSON.parse(STORAGE.getItem('data'));
+					
+					DATA.coin = {
+							'gY8aH' : true,
+							'Pd4' : false,
+							'TadCax' : 0,
+							'SgQwef' : 'e6d7362cde8aaaaba606825eeccdd506'
+						}
+					STORAGE.setItem('data', JSON.stringify(DATA));
+					
+					setTimeout(function(){ location.reload(); }, 1000);
+				}
+			});
+		}else{
+			var gameTitle = '', gameBgColor = '', gameIframe = '';
+			
+			switch(game){
+				case 'tzfe':
+					gameTitle = '2048';
+					gameBgColor = '#F0F0D8';
+					gameIframe = '<iframe id="2048" src="games/2048/index.html" scrolling="no" width="550" height="650" allowfullscreen="true" onload="sys.onLoadHandler(\'tzfe\', \'ptc\');"></iframe>';
+					break;
+				case 'flappy':
+					gameTitle = 'Flappy Bird';
+					gameBgColor = '#DED895';
+					gameIframe = '<iframe id="flappy" src="games/flappybird/index.html" scrolling="no" width="500" height="550" allowfullscreen="true" onload="sys.onLoadHandler(\'flappy\', \'ptc\');"></iframe>';
+					break;
+				case 'pacman':
+					gameTitle = 'Pac Man';
+					gameBgColor = '#000000';
+					gameIframe = '<iframe id="pacman" src="games/pacman/index.html" scrolling="no" width="350" height="420" allowfullscreen="true" onload="sys.onLoadHandler(\'pacman\', \'ptc\');"></iframe>';
+					break;
+				case 'bobble':
+					gameTitle = 'Puzzle Bobble';
+					gameBgColor = '#444444';
+					gameIframe = '<iframe id="bobble" src="games/bobble/index.html" scrolling="no" width="500" height="800" allowfullscreen="true" onload="sys.onLoadHandler(\'bobble\', \'ptc\');"></iframe>';
+					break;
+				case 'sudoku':
+					gameTitle = 'Sudoku';
+					gameBgColor = '#FFFFFF';
+					gameIframe = '<iframe id="sudoku" src="games/sudoku/index.html" scrolling="no" width="450" height="500" allowfullscreen="true" onload="sys.onLoadHandler(\'sudoku\', \'ptc\');"></iframe>';
+					break;
+				case 'trex':
+					gameTitle = 'T-Rex Runner';
+					gameBgColor = '#FFFFFF';
+					gameIframe = '<iframe id="trexrunner" src="games/trexrunner/index.html" scrolling="no" width="500" height="350" allowfullscreen="true" onload="sys.onLoadHandler(\'trex\', \'ptc\');"></iframe>';
+					break;
+				case 'tetris':
+					gameTitle = 'Tetris';
+					gameBgColor = '#3B2313';
+					gameIframe = '<iframe id="tetris" src="games/tetris/index.html" scrolling="no" width="600" height="800" allowfullscreen="true" onload="sys.onLoadHandler(\'tetris\', \'ptc\');"></iframe>';
+					break;
+				case 'twodots':
+					gameTitle = 'Two Dots';
+					gameBgColor = '#FFFFFF';
+					gameIframe = '<iframe id="twodots" src="games/twodots/index.html" scrolling="no" width="500" height="500" allowfullscreen="true" onload="sys.onLoadHandler(\'twodots\', \'ptc\');"></iframe>';
+					break;
+			}
+			
+			apps.dialog.confirm((msgPracticeConfirm[JSON.parse(STORAGE.getItem('data')).configuration.language]), '', function(){
+				if(c(STORAGE.getItem('data'))){
+					var DATA = JSON.parse(STORAGE.getItem('data'));
+					var curCoin = b(Object.keys(DATA.coin)[1]);
+					
+					if(curCoin<1){
+						apps.dialog.close();
+						apps.dialog.alert((msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]), '');
+						apps.loginScreen.close($('#ptc'), true);
+					}else{
+						apps.dialog.preloader();
+						curCoin--;
+						var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
+						
+						DATA.coin = {};
+						DATA.coin[T] = F;
+						DATA.coin[S] = K;
+						DATA.coin[J] = Q;
+						DATA.coin[E] = G;
+						STORAGE.setItem('data', JSON.stringify(DATA));
+						
+						$('#wooho-coin').find('.fab-text').text(Q);
+				
+						apps.loginScreen.close($('#ptc'), true);
+						$('#game .navbar').find('.title').text(gameTitle);
+						$('#game .page .login-screen-content').css('background-color', gameBgColor);
+						apps.loginScreen.open($('#game'), true);
+						$('#game .iframe iframe').remove();
+						$('#game .iframe').append(gameIframe);
+					}
+				}else{
+					apps.toast.create({
+						icon: '<i class="material-icons">bug_report</i>',
+						text: 'Coin error detected!',
+						position: 'center',
+						closeTimeout: 1000,
+					}).open();
+					
+					var DATA = JSON.parse(STORAGE.getItem('data'));
+					
+					DATA.coin = {
+							'gY8aH' : true,
+							'Pd4' : false,
+							'TadCax' : 0,
+							'SgQwef' : 'e6d7362cde8aaaaba606825eeccdd506'
+						}
+					STORAGE.setItem('data', JSON.stringify(DATA));
+					
+					setTimeout(function(){ location.reload(); }, 1000);
+				}
+			});
+		}
+	},
+	'onLoadHandler' : function(game, mode){
+		if(mode == 'pnw'){
+			switch(game){
+				case 'tzfe':
+					var w = window.innerWidth,
+						h = window.innerHeight;
+					var sizeW = (w/550),
+						sizeH = (h/(650+56));
+						
+					if(sizeW < sizeH){
+						$('#gamePNW iframe').css('transform', 'scale(' + sizeW + ')');
+						$('#gamePNW iframe').css('top', ((((sizeW*650)-650)/2)+56+'px'));
+						$('#gamePNW iframe').css('left', ((((sizeW*550)-550)/2)+'px'));
+					}else{
+						$('#gamePNW iframe').css('transform', 'scale(' + sizeH + ')');
+						$('#gamePNW iframe').css('top', ((((sizeH*650)-650)/2)+56+'px'));
+						$('#gamePNW iframe').css('left', ((((sizeH*550)-550)/2)+'px'));
+					}
+					
+					if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+						$('#sound', $('#gamePNW .iframe iframe').contents()).remove();
+					}
+					break;
+					
+				case 'flappy':
+					var w = window.innerWidth,
+						h = window.innerHeight;
+					var sizeW = (w/500),
+						sizeH = (h/(550+56));
+						
+					if(sizeW < sizeH){
+						$('#gamePNW iframe').css('transform', 'scale(' + sizeW + ')');
+						$('#gamePNW iframe').css('top', ((((sizeW*550)-550)/2)+56+'px'));
+						$('#gamePNW iframe').css('left', ((((sizeW*500)-500)/2)+'px'));
+					}else{
+						$('#gamePNW iframe').css('transform', 'scale(' + sizeH + ')');
+						$('#gamePNW iframe').css('top', ((((sizeH*550)-550)/2)+56+'px'));
+						$('#gamePNW iframe').css('left', ((((sizeH*500)-500)/2)+'px'));
+					}
+					
+					if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+						$('#gamePNW iframe')[0].contentWindow.buzz.all().setVolume(0);
+					}
+					break;
+					
+				case 'pacman':
+					var w = window.innerWidth,
+						h = window.innerHeight;
+					var sizeW = (w/350),
+						sizeH = (h/(420+56));
+						
+					if(sizeW < sizeH){
+						$('#gamePNW iframe').css('transform', 'scale(' + sizeW + ')');
+						$('#gamePNW iframe').css('top', ((((sizeW*420)-420)/2)+56+'px'));
+						$('#gamePNW iframe').css('left', ((((sizeW*350)-350)/2)+'px'));
+					}else{
+						$('#gamePNW iframe').css('transform', 'scale(' + sizeH + ')');
+						$('#gamePNW iframe').css('top', ((((sizeH*420)-420)/2)+56+'px'));
+						$('#gamePNW iframe').css('left', ((((sizeH*350)-350)/2)+'px'));
+					}
+					
+					if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+						$('#gamePNW iframe')[0].contentWindow.GROUP_SOUND.mute();
+					}
+					break;
+					
+				case 'bobble':
+					var w = window.innerWidth,
+						h = window.innerHeight;
+					var sizeW = (w/500),
+						sizeH = (h/(800+56));
+						
+					console.log('w = ' + w + ', h = ' + h + ', sizeW' + sizeW + ', sizeH' + sizeH);
+					if(sizeW < sizeH){
+						$('#gamePNW iframe').css('transform', 'scale(' + sizeW + ')');
+						$('#gamePNW iframe').css('top', ((((sizeW*800)-800)/2)+56+'px'));
+						$('#gamePNW iframe').css('left', ((((sizeW*500)-500)/2)+'px'));
+					}else{
+						$('#gamePNW iframe').css('transform', 'scale(' + sizeH + ')');
+						$('#gamePNW iframe').css('top', ((((sizeH*800)-800)/2)+56+'px'));
+						$('#gamePNW iframe').css('left', ((((sizeH*500)-500)/2)+'px'));
+					}
+					
+					if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+						$('#sound', $('#gamePNW .iframe iframe').contents()).remove();
+					}
+					break;
+					
+				case 'sudoku':
+					var w = window.innerWidth,
+						h = window.innerHeight;
+					var sizeW = (w/450),
+						sizeH = (h/(500+56));
+						
+					if(sizeW < sizeH){
+						$('#gamePNW iframe').css('transform', 'scale(' + sizeW + ')');
+						$('#gamePNW iframe').css('top', ((((sizeW*500)-500)/2)+56+'px'));
+						$('#gamePNW iframe').css('left', ((((sizeW*450)-450)/2)+'px'));
+					}else{
+						$('#gamePNW iframe').css('transform', 'scale(' + sizeH + ')');
+						$('#gamePNW iframe').css('top', ((((sizeH*500)-500)/2)+56+'px'));
+						$('#gamePNW iframe').css('left', ((((sizeH*450)-450)/2)+'px'));
+					}
+					
+					if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+						$('#sound', $('#gamePNW .iframe iframe').contents()).remove();
+					}
+					break;
+					
+				case 'trex':
+					var w = window.innerWidth,
+						h = window.innerHeight;
+					var sizeW = (w/500),
+						sizeH = (h/(350+56));
+						
+					if(sizeW < sizeH){
+						$('#gamePNW iframe').css('transform', 'scale(' + sizeW + ')');
+						$('#gamePNW iframe').css('top', ((((sizeW*350)-350)/2)+56+'px'));
+						$('#gamePNW iframe').css('left', ((((sizeW*500)-500)/2)+'px'));
+					}else{
+						$('#gamePNW iframe').css('transform', 'scale(' + sizeH + ')');
+						$('#gamePNW iframe').css('top', ((((sizeH*350)-350)/2)+56+'px'));
+						$('#gamePNW iframe').css('left', ((((sizeH*500)-500)/2)+'px'));
+					}
+					if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+						$('#audio-resources', $('#gamePNW .iframe iframe').contents()).remove();
+					}
+					break;
+					
+				case 'tetris':
+					var w = window.innerWidth,
+						h = window.innerHeight;
+					var sizeW = (w/600),
+						sizeH = (h/(800+56));
+						
+					if(sizeW < sizeH){
+						$('#gamePNW iframe').css('transform', 'scale(' + sizeW + ')');
+						$('#gamePNW iframe').css('top', ((((sizeW*800)-800)/2)+56+'px'));
+						$('#gamePNW iframe').css('left', ((((sizeW*600)-600)/2)+'px'));
+					}else{
+						$('#gamePNW iframe').css('transform', 'scale(' + sizeH + ')');
+						$('#gamePNW iframe').css('top', ((((sizeH*800)-800)/2)+56+'px'));
+						$('#gamePNW iframe').css('left', ((((sizeH*600)-600)/2)+'px'));
+					}
+					if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+						$('#woohoSound', $('#gamePNW .iframe iframe').contents()).remove();
+					}
+					break;
+					
+				case 'twodots':
+					var w = window.innerWidth,
+						h = window.innerHeight;
+					var sizeW = (w/500),
+						sizeH = (h/(500+56));
+						
+					if(sizeW < sizeH){
+						$('#gamePNW iframe').css('transform', 'scale(' + sizeW + ')');
+						$('#gamePNW iframe').css('top', ((((sizeW*500)-500)/2)+56+'px'));
+						$('#gamePNW iframe').css('left', ((((sizeW*500)-500)/2)+'px'));
+					}else{
+						$('#gamePNW iframe').css('transform', 'scale(' + sizeH + ')');
+						$('#gamePNW iframe').css('top', ((((sizeH*500)-500)/2)+56+'px'));
+						$('#gamePNW iframe').css('left', ((((sizeH*500)-500)/2)+'px'));
+					}
+					if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+						$('#sound', $('#gamePNW .iframe iframe').contents()).remove();
+					}
+					break;
+			}
+			window.clearInterval(gamePnwInterval);
+			
+			gamePnwInterval = window.setInterval(function(){
+				gamePnwTimer--;
+				
+				if(gamePnwTimer < 1){
+					window.clearInterval(gamePnwInterval);
+					
+					var gameName = $('#gamePNW .iframe iframe').attr('id'),
+						gameScore = 0;
+						
+					switch(gameName){
+						case '2048':
+							gameScore = parseInt($('span#score', $('#gamePNW .iframe iframe').contents()).text());
+							break;
+						case 'flappy':
+							var digit = $('#currentscore img', $('#gamePNW .iframe iframe').contents()).length;
+							var tmpScore = '';
+							
+							for(var i=0; i<digit; i++){
+								tmpScore += ($('#currentscore img:eq(' + i + ')', $('#gamePNW .iframe iframe').contents()).attr('alt'));
+							}
+							gameScore = parseInt(tmpScore);
+							break;
+						case 'pacman':
+							gameScore = parseInt($('#score span', $('#gamePNW .iframe iframe').contents()).text());
+							break;
+						case 'bobble':
+							gameScore = parseInt($('#score span', $('#gamePNW .iframe iframe').contents()).text());
+							break;
+						case 'sudoku':
+							gameScore = parseInt($('#score span', $('#gamePNW .iframe iframe').contents()).text());
+							break;
+						case 'trexrunner':
+							gameScore = parseInt($('body a#ctrl_up', $('#gamePNW .iframe iframe').contents()).attr('alt'));
+							break;
+						case 'tetris':
+							gameScore = parseInt($('body #canvas', $('#gamePNW .iframe iframe').contents()).attr('alt'));
+							break;
+						case 'twodots':
+							gameScore = parseInt($('div#score', $('#gamePNW .iframe iframe').contents()).text());
+							break;
+					}
+					
+					gameScore = (isNaN(gameScore) ? 0 : gameScore);
+					
+					var DATA = JSON.parse(STORAGE.getItem('data'));
+						
+					ajaxData = {
+						'usr' : DATA.profile.username,
+						'state' : DATA.profile.state,
+						'ctn' : DATA.profile.contact,
+						'game' : gameName,
+						'score' : gameScore,
+						'pnw' : 1
+					};
+					postAjaxData = "ACT=" + encodeURIComponent('upload_check_score')
+								 + "&DATA=" + encodeURIComponent(sys.serialize(ajaxData));
+							  
+					$.ajax({
+						type: 'POST',
+						url: 'http://wooho.fun/',
+						data: postAjaxData,
+						beforeSend: function(){
+							apps.dialog.preloader();
+						},
+						success: function(str){
+							window.clearInterval(gamePnwInterval);
+							
+							var champion = JSON.parse(str), x = '';
+							
+							apps.dialog.close();
+							
+							x = '<div class="list"><ul>';
+							for(var i=0; i<champion.day1.length; i++){
+								x += '<li><div class="item-content">';
+								x += '<div class="item-media"><img src="img/state/' + champion.day1[i].user_state + '.png" width="24" height="24"/></div>';
+								x += '<div class="item-inner"><div class="item-title">' + champion.day1[i].user_id + '</div>';
+								x += '<div class="item-after">' + champion.day1[i].score + '</div></div>';
+								x += '</div></li>';
+							}
+							x += '</ul></div>';
+							$('#scoreDay').html(x);
+							
+							x = '<div class="list"><ul>';
+							for(var i=0; i<champion.day7.length; i++){
+								x += '<li><div class="item-content">';
+								x += '<div class="item-media"><img src="img/state/' + champion.day7[i].user_state + '.png" width="24" height="24"/></div>';
+								x += '<div class="item-inner"><div class="item-title">' + champion.day7[i].user_id + '</div>';
+								x += '<div class="item-after">' + champion.day7[i].score + '</div></div>';
+								x += '</div></li>';
+							}
+							x += '</ul></div>';
+							$('#scoreWeek').html(x);
+							
+							x = '<div class="list"><ul>';
+							for(var i=0; i<champion.day30.length; i++){
+								x += '<li><div class="item-content">';
+								x += '<div class="item-media"><img src="img/state/' + champion.day30[i].user_state + '.png" width="24" height="24"/></div>';
+								x += '<div class="item-inner"><div class="item-title">' + champion.day30[i].user_id + '</div>';
+								x += '<div class="item-after">' + champion.day30[i].score + '</div></div>';
+								x += '</div></li>';
+							}
+							x += '</ul></div>';
+							$('#scoreMonth').html(x);
+							
+							x = '<div class="list"><ul>';
+							for(var i=0; i<champion.pnw.length; i++){
+								x += '<li><div class="item-content">';
+								x += '<div class="item-media"><img src="img/state/' + champion.pnw[i].user_state + '.png" width="24" height="24"/></div>';
+								x += '<div class="item-inner"><div class="item-title">' + champion.pnw[i].user_id + '</div>';
+								x += '<div class="item-after">' + champion.pnw[i].score + '</div></div>';
+								x += '</div></li>';
+							}
+							x += '</ul></div>';
+							$('#scorePNW').html(x);
+							
+							apps.popover.open('.popover-leaderboard');
+							$('a[href="#scorePNW"]')[0].click();
+							
+							window.clearInterval(gameInterval);
+							$('#gamePNW .page .login-screen-content').css('background-color', '#fff');
+							$('#gamePNW .iframe iframe').remove();
+							
+							apps.loginScreen.close($('#gamePNW'), true);
+							
+							if(typeof admob !== 'undefined'){
+								admob.banner.show();
+							}
+						}
+					});
+				}else if(gamePnwTimer == 304){
+					apps.notification.create({
+						icon: '<img src="/res/icon.png" height="16" width="16">',
+						title: '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;W O O H O&nbsp;&nbsp;&nbsp;',
+						titleRightText: 'now',
+						text: msgPnwCountDown['300'][JSON.parse(STORAGE.getItem('data')).configuration.language],
+						closeTimeout: 6000,
+					}).open();
+				}else if(gamePnwTimer == 240){
+					apps.notification.create({
+						icon: '<img src="/res/icon.png" height="16" width="16">',
+						title: '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;W O O H O&nbsp;&nbsp;&nbsp;',
+						titleRightText: 'now',
+						text: msgPnwCountDown['240'][JSON.parse(STORAGE.getItem('data')).configuration.language],
+						closeTimeout: 3000,
+					}).open();
+				}else if(gamePnwTimer == 180){
+					apps.notification.create({
+						icon: '<img src="/res/icon.png" height="16" width="16">',
+						title: '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;W O O H O&nbsp;&nbsp;&nbsp;',
+						titleRightText: 'now',
+						text: msgPnwCountDown['180'][JSON.parse(STORAGE.getItem('data')).configuration.language],
+						closeTimeout: 3000,
+					}).open();
+				}else if(gamePnwTimer == 120){
+					apps.notification.create({
+						icon: '<img src="/res/icon.png" height="16" width="16">',
+						title: '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;W O O H O&nbsp;&nbsp;&nbsp;',
+						titleRightText: 'now',
+						text: msgPnwCountDown['120'][JSON.parse(STORAGE.getItem('data')).configuration.language],
+						closeTimeout: 3000,
+					}).open();
+				}else if(gamePnwTimer == 60){
+					apps.notification.create({
+						icon: '<img src="/res/icon.png" height="16" width="16">',
+						title: '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;W O O H O&nbsp;&nbsp;&nbsp;',
+						titleRightText: 'now',
+						text: msgPnwCountDown['60'][JSON.parse(STORAGE.getItem('data')).configuration.language],
+						closeTimeout: 3000,
+					}).open();
+				}else if(gamePnwTimer == 30){
+					apps.notification.create({
+						icon: '<img src="/res/icon.png" height="16" width="16">',
+						title: '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;W O O H O&nbsp;&nbsp;&nbsp;',
+						titleRightText: 'now',
+						text: msgPnwCountDown['30'][JSON.parse(STORAGE.getItem('data')).configuration.language],
+						closeTimeout: 3000,
+					}).open();
+				}else if(gamePnwTimer == 10){
+					apps.notification.create({
+						icon: '<img src="/res/icon.png" height="16" width="16">',
+						title: '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;W O O H O&nbsp;&nbsp;&nbsp;',
+						titleRightText: 'now',
+						text: msgPnwCountDown['10'][JSON.parse(STORAGE.getItem('data')).configuration.language],
+						closeTimeout: 3000,
+					}).open();
 				}
 			}, 1000);
+		}else{
+			switch(game){
+				case 'tzfe':
+					var w = window.innerWidth,
+						h = window.innerHeight;
+					var sizeW = (w/550),
+						sizeH = (h/(650+56));
+						
+					if(sizeW < sizeH){
+						$('#game iframe').css('transform', 'scale(' + sizeW + ')');
+						$('#game iframe').css('top', ((((sizeW*650)-650)/2)+56+'px'));
+						$('#game iframe').css('left', ((((sizeW*550)-550)/2)+'px'));
+					}else{
+						$('#game iframe').css('transform', 'scale(' + sizeH + ')');
+						$('#game iframe').css('top', ((((sizeH*650)-650)/2)+56+'px'));
+						$('#game iframe').css('left', ((((sizeH*550)-550)/2)+'px'));
+					}
+					
+					if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+						$('#sound', $('#game .iframe iframe').contents()).remove();
+					}
+					break;
+					
+				case 'flappy':
+					var w = window.innerWidth,
+						h = window.innerHeight;
+					var sizeW = (w/500),
+						sizeH = (h/(550+56));
+						
+					if(sizeW < sizeH){
+						$('#game iframe').css('transform', 'scale(' + sizeW + ')');
+						$('#game iframe').css('top', ((((sizeW*550)-550)/2)+56+'px'));
+						$('#game iframe').css('left', ((((sizeW*500)-500)/2)+'px'));
+					}else{
+						$('#game iframe').css('transform', 'scale(' + sizeH + ')');
+						$('#game iframe').css('top', ((((sizeH*550)-550)/2)+56+'px'));
+						$('#game iframe').css('left', ((((sizeH*500)-500)/2)+'px'));
+					}
+					
+					if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+						$('#game iframe')[0].contentWindow.buzz.all().setVolume(0);
+					}
+					break;
+					
+				case 'pacman':
+					var w = window.innerWidth,
+						h = window.innerHeight;
+					var sizeW = (w/350),
+						sizeH = (h/(420+56));
+						
+					if(sizeW < sizeH){
+						$('#game iframe').css('transform', 'scale(' + sizeW + ')');
+						$('#game iframe').css('top', ((((sizeW*420)-420)/2)+56+'px'));
+						$('#game iframe').css('left', ((((sizeW*350)-350)/2)+'px'));
+					}else{
+						$('#game iframe').css('transform', 'scale(' + sizeH + ')');
+						$('#game iframe').css('top', ((((sizeH*420)-420)/2)+56+'px'));
+						$('#game iframe').css('left', ((((sizeH*350)-350)/2)+'px'));
+					}
+					
+					if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+						$('#game iframe')[0].contentWindow.GROUP_SOUND.mute();
+					}
+					break;
+					
+				case 'bobble':
+					var w = window.innerWidth,
+						h = window.innerHeight;
+					var sizeW = (w/500),
+						sizeH = (h/(800+56));
+						
+					console.log('w = ' + w + ', h = ' + h + ', sizeW' + sizeW + ', sizeH' + sizeH);
+					if(sizeW < sizeH){
+						$('#game iframe').css('transform', 'scale(' + sizeW + ')');
+						$('#game iframe').css('top', ((((sizeW*800)-800)/2)+56+'px'));
+						$('#game iframe').css('left', ((((sizeW*500)-500)/2)+'px'));
+					}else{
+						$('#game iframe').css('transform', 'scale(' + sizeH + ')');
+						$('#game iframe').css('top', ((((sizeH*800)-800)/2)+56+'px'));
+						$('#game iframe').css('left', ((((sizeH*500)-500)/2)+'px'));
+					}
+					
+					if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+						$('#sound', $('#game .iframe iframe').contents()).remove();
+					}
+					break;
+					
+				case 'sudoku':
+					var w = window.innerWidth,
+						h = window.innerHeight;
+					var sizeW = (w/450),
+						sizeH = (h/(500+56));
+						
+					if(sizeW < sizeH){
+						$('#game iframe').css('transform', 'scale(' + sizeW + ')');
+						$('#game iframe').css('top', ((((sizeW*500)-500)/2)+56+'px'));
+						$('#game iframe').css('left', ((((sizeW*450)-450)/2)+'px'));
+					}else{
+						$('#game iframe').css('transform', 'scale(' + sizeH + ')');
+						$('#game iframe').css('top', ((((sizeH*500)-500)/2)+56+'px'));
+						$('#game iframe').css('left', ((((sizeH*450)-450)/2)+'px'));
+					}
+					
+					if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+						$('#sound', $('#game .iframe iframe').contents()).remove();
+					}
+					break;
+					
+				case 'trex':
+					var w = window.innerWidth,
+						h = window.innerHeight;
+					var sizeW = (w/500),
+						sizeH = (h/(350+56));
+						
+					if(sizeW < sizeH){
+						$('#game iframe').css('transform', 'scale(' + sizeW + ')');
+						$('#game iframe').css('top', ((((sizeW*350)-350)/2)+56+'px'));
+						$('#game iframe').css('left', ((((sizeW*500)-500)/2)+'px'));
+					}else{
+						$('#game iframe').css('transform', 'scale(' + sizeH + ')');
+						$('#game iframe').css('top', ((((sizeH*350)-350)/2)+56+'px'));
+						$('#game iframe').css('left', ((((sizeH*500)-500)/2)+'px'));
+					}
+					if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+						$('#audio-resources', $('#game .iframe iframe').contents()).remove();
+					}
+					break;
+					
+				case 'tetris':
+					var w = window.innerWidth,
+						h = window.innerHeight;
+					var sizeW = (w/600),
+						sizeH = (h/(800+56));
+						
+					if(sizeW < sizeH){
+						$('#game iframe').css('transform', 'scale(' + sizeW + ')');
+						$('#game iframe').css('top', ((((sizeW*800)-800)/2)+56+'px'));
+						$('#game iframe').css('left', ((((sizeW*600)-600)/2)+'px'));
+					}else{
+						$('#game iframe').css('transform', 'scale(' + sizeH + ')');
+						$('#game iframe').css('top', ((((sizeH*800)-800)/2)+56+'px'));
+						$('#game iframe').css('left', ((((sizeH*600)-600)/2)+'px'));
+					}
+					if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+						$('#woohoSound', $('#game .iframe iframe').contents()).remove();
+					}
+					break;
+					
+				case 'twodots':
+					var w = window.innerWidth,
+						h = window.innerHeight;
+					var sizeW = (w/500),
+						sizeH = (h/(500+56));
+						
+					if(sizeW < sizeH){
+						$('#game iframe').css('transform', 'scale(' + sizeW + ')');
+						$('#game iframe').css('top', ((((sizeW*500)-500)/2)+56+'px'));
+						$('#game iframe').css('left', ((((sizeW*500)-500)/2)+'px'));
+					}else{
+						$('#game iframe').css('transform', 'scale(' + sizeH + ')');
+						$('#game iframe').css('top', ((((sizeH*500)-500)/2)+56+'px'));
+						$('#game iframe').css('left', ((((sizeH*500)-500)/2)+'px'));
+					}
+					if(!(JSON.parse(STORAGE.getItem('data')).configuration.sound)){
+						$('#sound', $('#game .iframe iframe').contents()).remove();
+					}
+					break;
+			}
+			
+			if(gameTimer == 0){
+				gameInterval = window.setInterval(function(){
+					gameTimer++;
+					
+					if(gameTimer>59){
+						if(c(STORAGE.getItem('data'))){
+							var DATA = JSON.parse(STORAGE.getItem('data'));
+							var curCoin = b(Object.keys(DATA.coin)[1]);
+							
+							if(curCoin<1){
+								if(!inEarnAd){
+									inEarnAd = true;
+								
+									apps.dialog.create({
+										title : '',
+										text : (msgNotEnough[JSON.parse(STORAGE.getItem('data')).configuration.language]),
+										closeByBackdropClick: false,
+										buttons: [
+											{
+												text: (msgNotEnoughEarn[JSON.parse(STORAGE.getItem('data')).configuration.language]),
+											},{
+												text: (msgNotEnoughExit[JSON.parse(STORAGE.getItem('data')).configuration.language]),
+											}
+										],
+										onClick: function(e, num){
+											if(num == 0){
+												if(rewardReady){
+													admob.rewardvideo.show();
+													inEarnAd = true;
+												}else{
+													inEarnAd = false;
+												}
+											}else{
+												$('#game .navbar .link.back').click();
+												gameTimer = 0;
+												inEarnAd = false;
+											}
+										}
+									}).open();
+								}
+							}else{
+								curCoin--;
+								var E = sys.genStr(6), T = sys.genStr(5), S = a(curCoin), G = md5(S), J = sys.genStr(6), Q = curCoin, F = true, K = false;
+								
+								DATA.coin = {};
+								DATA.coin[T] = F;
+								DATA.coin[S] = K;
+								DATA.coin[J] = Q;
+								DATA.coin[E] = G;
+								STORAGE.setItem('data', JSON.stringify(DATA));
+								
+								$('#wooho-coin').find('.fab-text').text(Q);
+								gameTimer = 0;
+							}
+						}else{
+							apps.toast.create({
+								icon: '<i class="material-icons">bug_report</i>',
+								text: 'Coin error detected!',
+								position: 'center',
+								closeTimeout: 1000,
+							}).open();
+							
+							var DATA = JSON.parse(STORAGE.getItem('data'));
+							
+							DATA.coin = {
+									'gY8aH' : true,
+									'Pd4' : false,
+									'TadCax' : 0,
+									'SgQwef' : 'e6d7362cde8aaaaba606825eeccdd506'
+								}
+							STORAGE.setItem('data', JSON.stringify(DATA));
+							
+							setTimeout(function(){ location.reload(); }, 1000);
+						}
+					}
+				}, 1000);
+			}
 		}
-		if(admob){
+		
+		if(typeof admob != 'undefined'){
 			admob.banner.hide();
 		}
 		apps.dialog.close();
