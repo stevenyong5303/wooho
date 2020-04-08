@@ -1,13 +1,13 @@
 var $$ = Dom7;
 var sys = new Object();
 var STORAGE = window.localStorage;
-var requestInterval, requestTimer = 0, gameInterval, gameTimer = 0, adInterval, adTimer = 0, interstitialReady = false, inEarnAd = false;
+var requestInterval, requestTimer = 0, gameInterval, gameTimer = 0, adInterval, adTimer = 0, interstitialReady = false, inEarnAd = false, rewardReady = false;
 var apps = new Framework7({
 			root: '#app',
 			id: 'com.wkv.game',
 			name: 'WOOHO',
 			theme: 'md',
-			version: "1.0.32",
+			version: "1.0.33",
 			rtl: false,
 			language: "en-US"
 		});
@@ -124,6 +124,8 @@ var app = {
 		document.addEventListener('admob.rewardvideo.events.LOAD', function(event){
 			$('.btn-ecn').removeClass('disabled');
 			$('.btn-ecn').prop('disabled', false);
+			
+			rewardReady = true;
 		});
 
 		document.addEventListener('admob.rewardvideo.events.CLOSE', function(event){
@@ -131,6 +133,7 @@ var app = {
 			$('.btn-ecn').prop('disabled', true);
 			
 			admob.rewardvideo.prepare();
+			rewardReady = false;
 			inEarnAd = false;
 		});
 		
@@ -1415,10 +1418,11 @@ sys = {
 		if($('.login-screen.modal-in').length != 0){
 			window.clearInterval(gameInterval);
 			apps.loginScreen.close();
+			inEarnAd = false;
 			
 			return false;
 		}else{
-			window.close();
+			navigator.app.exitApp();
 		}
 	},
 	'onLoadHandler' : function(game){
@@ -1633,8 +1637,12 @@ sys = {
 									],
 									onClick: function(e, num){
 										if(num == 0){
-											admob.rewardvideo.show();
-											inEarnAd = true;
+											if(rewardReady){
+												admob.rewardvideo.show();
+												inEarnAd = true;
+											}else{
+												inEarnAd = false;
+											}
 										}else{
 											$('#game .navbar .link.back').click();
 											gameTimer = 0;
